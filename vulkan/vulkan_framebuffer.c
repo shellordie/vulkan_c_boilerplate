@@ -4,7 +4,7 @@ int create_framebuffer(vulkan_t* vulkan,uint16_t width,uint16_t height)
 {
   int result;
   //allocate framebuffer handles
-  vulkan->framebuffer.p_handles=malloc(vulkan->swapchain.images_count*sizeof(VkFramebuffer)); 
+  vulkan->framebuffer.p_handles=mem_allocate(vulkan->swapchain.images_count*sizeof(VkFramebuffer)); 
 
   for(uint32_t i=0;i<vulkan->swapchain.images_count;i++)
   {

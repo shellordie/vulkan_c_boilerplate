@@ -76,8 +76,8 @@ int get_swapchain_images(vulkan_t* vulkan)
   printf("swapchain images count =%d !\n",vulkan->swapchain.images_count);
 
   //allocate memory for swapchain images and their views
-  vulkan->swapchain.p_images=malloc(vulkan->swapchain.images_count*sizeof(VkImage));
-  vulkan->swapchain.p_images_views=malloc(vulkan->swapchain.images_count*sizeof(VkImageView));
+  vulkan->swapchain.p_images=mem_allocate(vulkan->swapchain.images_count*sizeof(VkImage));
+  vulkan->swapchain.p_images_views=mem_allocate(vulkan->swapchain.images_count*sizeof(VkImageView));
 
   // get swapchain images
   result=vkGetSwapchainImagesKHR(vulkan->logical_device,vulkan->swapchain.handle,&vulkan->swapchain.images_count,vulkan->swapchain.p_images);

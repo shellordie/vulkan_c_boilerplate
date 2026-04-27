@@ -4,7 +4,7 @@
 #include "vulkan_types.h"
 
 int create_renderpass(vulkan_t* vulkan);
-
+int begin_renderpass(vulkan_t vulkan,uint32_t image_index,uint32_t width,uint32_t height);
 #endif
 
 

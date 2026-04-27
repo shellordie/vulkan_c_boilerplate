@@ -62,4 +62,28 @@ int create_renderpass(vulkan_t* vulkan)
   return 0;
 }
 
+int begin_renderpass(vulkan_t vulkan,uint32_t image_index,uint32_t width,uint32_t height)
+{
+  VkRenderPassBeginInfo renderpass_begin_info;
+  renderpass_begin_info.sType=VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderpass_begin_info.pNext=0;
+  renderpass_begin_info.renderPass=vulkan.renderpass;
+  renderpass_begin_info.framebuffer=vulkan.framebuffer.p_handles[image_index];
+  VkRect2D render_area={{0,0},{width,height}};
+  renderpass_begin_info.renderArea=render_area;
+  renderpass_begin_info.clearValueCount=1;
+  VkClearValue clear_value;
+  clear_value.color.float32[0]=0.0f;
+  clear_value.color.float32[1]=0.0f;
+  clear_value.color.float32[2]=1.0f;
+  clear_value.color.float32[3]=1.0f;
+  renderpass_begin_info.pClearValues=&clear_value;
+
+  VkSubpassBeginInfo subpass_begin_info;
+  subpass_begin_info.sType=VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
+  subpass_begin_info.pNext=0;
+  subpass_begin_info.contents=VK_SUBPASS_CONTENTS_INLINE;
+  vkCmdBeginRenderPass2(vulkan.command_buffer,&renderpass_begin_info,&subpass_begin_info);
+  return 0;
+}
 
