@@ -132,18 +132,16 @@ int get_presentable_image(vulkan_t* p_vulkan,uint32_t* p_image_index)
     // query available swapchain image
     if(vkAcquireNextImageKHR(p_vulkan->logical_device,p_vulkan->swapchain.handle,UINT64_MAX,NULL,p_vulkan->swapchain.fence,p_image_index)!=VK_SUCCESS)
     {
-      printf(" -acquire presentable image failed \n");
       return -1;
     }
 
-    if(vkGetFenceStatus(p_vulkan->logical_device,p_vulkan->swapchain.fence)==VK_SUCCESS)
+    if(vkGetFenceStatus(p_vulkan->logical_device,p_vulkan->swapchain.fence)!=VK_SUCCESS)
     {
-      printf(" -found presentable image \n");
+      return -1;
     }
 
     if(vkResetFences(p_vulkan->logical_device,1,&p_vulkan->swapchain.fence)!=VK_SUCCESS)
     {
-      printf(" -failed to reset fences !\n");
       return -1;
     }
     return 0;
@@ -167,20 +165,13 @@ int present_image(vulkan_t* p_vulkan,uint32_t* p_image_index)
 
   if(vkQueuePresentKHR(p_vulkan->global_queue,&present_info)!=VK_SUCCESS)
   {
-    printf("presentation failed ! \n");
     return -1;
   }
   if(swapchain_result!=VK_SUCCESS)
   {
-    printf("swapchain presentation failed ! \n");
     return -1;
   }
-  else
-  {
-    printf("swapchain presentation success !\n");
-  }
-
-  printf("presentation done \n");
+  
   return 0;
 }
 

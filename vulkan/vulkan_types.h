@@ -7,6 +7,9 @@
 #include "../defines.h"
 
 
+#define vk_check(vk_status,message_f) assert(vk_status!=VK_SUCCESS,message,NULL)
+#define vk_check_ex(vk_status,message_f,message_s) assert(vk_status!=VK_SUCCESS,message,message_s)
+
 typedef struct swapchain_t
 {
   VkFormat image_format;

@@ -48,7 +48,6 @@ int begin_command_buffer(vulkan_t vulkan)
     printf(" -failed to begin the command buffer");
     return -1;
   }
-  printf(" -command buffer begin ! \n");
   return 0;
 }
 
@@ -68,8 +67,6 @@ int submit_command(vulkan_t vulkan)
     printf(" -queue submission failed ! \n");
     return -1;
   }
-
-  printf(" -queue submitted !\n");
   return 0;
 }
 
