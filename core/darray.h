@@ -16,6 +16,7 @@ void* _darray_allocate(u64 stride, u64 capacity);
 void _darray_destroy(void* p_mem_address);
 u64 _darray_get_info(void* p_mem_address,enum header_t header);
 void* _darray_push(void* p_mem_address,void* p_data,u64 index);
+void* _darray_pop(void* p_mem_address, u64 index);
 void* darray_resize(void* p_mem_address);
 void _darray_set_info(void* p_mem_address,enum header_t header,u64 data);
 void darray_test();
@@ -37,6 +38,7 @@ void darray_test();
 #define darray_set_stride(p_mem_address,data) _darray_set_info((void*)p_mem_address,HEADER_TYPE_STRIDE,data)
 
 
+// darray push
 #define darray_push(p_mem_address,data)\
 {\
   u64 index=darray_get_used(p_mem_address);\
@@ -48,6 +50,15 @@ void darray_test();
 {\
   p_mem_address=_darray_push((void*)p_mem_address,(void*)&p_data,index);\
 }\
+
+// darray pop
+#define darray_pop(p_mem_address)\
+{\
+  u64 index=darray_get_used(p_mem_address)-1;\
+  p_mem_address=_darray_pop(p_mem_address,index);\
+}\
+
+#define darray_pop_at(p_mem_address,index) p_mem_address=_darray_pop(p_mem_address,index)
 
 
 #endif
