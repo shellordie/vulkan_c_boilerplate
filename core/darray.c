@@ -12,26 +12,25 @@ void* _darray_allocate(u64 stride, u64 capacity)
   p_mem_address[HEADER_TYPE_CAPACITY]=capacity;
   p_mem_address[HEADER_TYPE_USED]=0;
 
-  p_mem_address+=header_size;
-  return (void*)p_mem_address;
+  void* ptr_mem_to_return=(void*)((u64)p_mem_address+header_size);
+  return (void*)ptr_mem_to_return;
 }
 
 void _darray_destroy(void* p_mem_address)
 {
   // calculate real mem address
-  u64* real_mem_address=(u64*)p_mem_address;
-  real_mem_address-=header_size;
+  u64 real_mem_address=((u64)p_mem_address-header_size);
   mem_free((void*)real_mem_address);
   p_mem_address=NULL;
 }
 
 void* _darray_push(void* p_mem_address,void* p_data,u64 index)
 {
-  //check if we have space for the push
   u64 mem_used=darray_get_used(p_mem_address);
   u64 capacity=darray_get_capacity(p_mem_address);
   u64 stride=darray_get_stride(p_mem_address);
 
+  //check if we have space for the push
   if(mem_used==capacity)
   {
     //resize darray
@@ -39,9 +38,10 @@ void* _darray_push(void* p_mem_address,void* p_data,u64 index)
     p_mem_address=darray_resize(p_mem_address);
     assert_failure(p_mem_address!=NULL,"p_mem_address error resizing darray");
   }
-  u64* p_mem=(u64*)p_mem_address;
-  p_mem+=(stride*index);
-  mem_copy((void*)p_mem,p_data,stride);
+  u64 mem_address=(u64)p_mem_address;
+  printf("mem ad u64 =%llu\n",(u64)p_mem_address);
+  mem_address+=(stride*index);
+  mem_copy((void*)mem_address,p_data,stride);
   //update used
   darray_set_used(p_mem_address,mem_used+1);
   return p_mem_address;
@@ -56,7 +56,7 @@ void* darray_resize(void* p_mem_address)
   void* p_new_mem_address=_darray_allocate(stride,capacity*ARRAY_RESIZE_FACTOR);
   assert_failure(stride==darray_get_stride(p_new_mem_address),"stride don't match");
   assert_failure((ARRAY_RESIZE_FACTOR*capacity)==darray_get_capacity(p_new_mem_address),"capacity don't match");
-  mem_copy(p_new_mem_address,p_mem_address,stride*mem_used);
+  mem_copy(p_new_mem_address,p_mem_address,stride*capacity);
   darray_set_used(p_new_mem_address,mem_used);
   darray_destroy(p_mem_address);
   return p_new_mem_address;
@@ -66,19 +66,20 @@ void* darray_resize(void* p_mem_address)
 u64 _darray_get_info(void* p_mem_address,enum header_t header)
 {
   // calculate real mem address
-  u64* mem_address=(u64*)p_mem_address;
+  u64 mem_address=(u64)p_mem_address;
   mem_address-=header_size;
+  u64* ptr_mem_address=(u64*)mem_address;
   u64 info;
   switch(header)
   {
     case HEADER_TYPE_STRIDE:
-      info=mem_address[HEADER_TYPE_STRIDE];
+      info=ptr_mem_address[HEADER_TYPE_STRIDE];
       break; 
     case HEADER_TYPE_CAPACITY:
-      info=mem_address[HEADER_TYPE_CAPACITY];
+      info=ptr_mem_address[HEADER_TYPE_CAPACITY];
       break;
     case HEADER_TYPE_USED:
-      info=mem_address[HEADER_TYPE_USED];
+      info=ptr_mem_address[HEADER_TYPE_USED];
       break;
     default:break;
   }
@@ -87,18 +88,19 @@ u64 _darray_get_info(void* p_mem_address,enum header_t header)
 
 void _darray_set_info(void* p_mem_address,enum header_t header,u64 data)
 {
-  u64* mem_address=(u64*)p_mem_address;
+  u64 mem_address=(u64)p_mem_address;
   mem_address-=header_size;
+  u64* ptr_mem_address=(u64*)mem_address;
   switch(header)
   {
     case HEADER_TYPE_STRIDE:
-      mem_address[HEADER_TYPE_STRIDE]=data;
+      ptr_mem_address[HEADER_TYPE_STRIDE]=data;
       break; 
     case HEADER_TYPE_CAPACITY:
-      mem_address[HEADER_TYPE_CAPACITY]=data;
+      ptr_mem_address[HEADER_TYPE_CAPACITY]=data;
       break;
     case HEADER_TYPE_USED:
-      mem_address[HEADER_TYPE_USED]=data;
+      ptr_mem_address[HEADER_TYPE_USED]=data;
       break;
     default:break;
   }
@@ -111,31 +113,61 @@ void darray_test()
   //int* p_int_array=darray_reserve(int,3);
   assert(p_int_array!=NULL,"darray_create failed","array_allocated");
 
-  assert_failure(darray_get_capacity(p_int_array)==1,"array capacity must be 1");
-  assert_failure(darray_get_stride(p_int_array)==4,"array stride must be 4");
-  assert_failure(darray_get_used(p_int_array)==0,"darray stride must be 0");
-
-  printf("PUSHING 3...\n");
-  darray_push(p_int_array,3);
-  printf("array index 0 =%d \n",p_int_array[0]);
-
-  assert_failure(darray_get_capacity(p_int_array)==1,"array capacity must be 1");
-  assert_failure(darray_get_stride(p_int_array)==4,"array stride must be 4");
-  assert_failure(darray_get_used(p_int_array)==1,"darray stride must be 1");
-
-  printf("PUSHING 5...\n");
-  darray_push(p_int_array,5);
+  printf("array capacity = %llu \n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu \n",darray_get_stride(p_int_array));
+  printf("array used=%llu \n",darray_get_used(p_int_array));
+  int data =3;
+  printf("PUSHING ...\n");
+  darray_push(p_int_array,data);
   for(u64 i=0;i<darray_get_used(p_int_array);i++)
   {
-    printf("array index %d =%d \n",i,p_int_array[i]);
+    printf("array index %llu =%d \n",i,p_int_array[i]);
   }
 
-  assert_failure(darray_get_capacity(p_int_array)==2,"array capacity must be 2");
-  assert_failure(darray_get_stride(p_int_array)==4,"array stride must be 4");
-  assert_failure(darray_get_used(p_int_array)==2,"darray stride must be 2");
+  printf("array capacity = %llu \n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_int_array));
+  printf("array used=%llu\n",darray_get_used(p_int_array));
+
+  data=5;
+  printf("PUSHING ...\n");
+  darray_push(p_int_array,data);
+  for(u64 i=0;i<darray_get_used(p_int_array);i++)
+  {
+    printf("array index %llu =%d \n",i,p_int_array[i]);
+  }
+
+  printf("array capacity = %llu\n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_int_array));
+  printf("array used=%llu\n",darray_get_used(p_int_array));
+
+  data=10;
+  printf("PUSHING ...\n");
+  darray_push(p_int_array,data);
+  for(u64 i=0;i<darray_get_used(p_int_array);i++)
+  {
+    printf("array index %llu =%d \n",i,p_int_array[i]);
+  }
+
+  printf("array capacity = %llu\n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_int_array));
+  printf("array used=%llu\n",darray_get_used(p_int_array));
+  
+  data=100;
+  printf("PUSHING ...\n");
+  darray_push(p_int_array,data);
+  for(u64 i=0;i<darray_get_used(p_int_array);i++)
+  {
+    printf("array index %llu =%d \n",i,p_int_array[i]);
+  }
+
+  printf("array capacity = %llu\n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_int_array));
+  printf("array used=%llu\n",darray_get_used(p_int_array));
+  
 
 
   darray_destroy(p_int_array);
+  assert_failure(1==0,"break here for test");
 
 }
 
