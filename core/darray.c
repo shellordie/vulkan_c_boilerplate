@@ -64,6 +64,7 @@ void* darray_resize(void* p_mem_address)
 
 void* _darray_pop(void* p_mem_address, u64 index)
 {
+  assert_failure(darray_get_used(p_mem_address)!=0,"can not pop array containing 0 element");
   u64 mem_used=darray_get_used(p_mem_address);
   u64 capacity=darray_get_capacity(p_mem_address);
   u64 stride=darray_get_stride(p_mem_address);
@@ -84,6 +85,11 @@ void* _darray_pop(void* p_mem_address, u64 index)
   }
 
   return p_mem_address;
+}
+
+void darray_reset(void* p_mem_address)
+{
+  darray_set_used(p_mem_address,0);
 }
 
 u64 _darray_get_info(void* p_mem_address,enum header_t header)
@@ -163,6 +169,20 @@ void darray_test()
   printf("array stride  =%llu\n",darray_get_stride(p_int_array));
   printf("array used=%llu\n",darray_get_used(p_int_array));
 
+  //
+  printf("RESETING .... \n");
+  darray_reset(p_int_array);
+  for(u64 i=0;i<darray_get_used(p_int_array);i++)
+  {
+    printf("array index %llu =%d \n",i,p_int_array[i]);
+  }
+
+  printf("array capacity = %llu\n",darray_get_capacity(p_int_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_int_array));
+  printf("array used=%llu\n",darray_get_used(p_int_array));
+
+
+  //
   data=10;
   printf("PUSHING ...\n");
   darray_push(p_int_array,data);
@@ -174,6 +194,8 @@ void darray_test()
   printf("array capacity = %llu\n",darray_get_capacity(p_int_array));
   printf("array stride  =%llu\n",darray_get_stride(p_int_array));
   printf("array used=%llu\n",darray_get_used(p_int_array));
+
+  //
 
   u64 index=0;
   printf("poping...\n");
