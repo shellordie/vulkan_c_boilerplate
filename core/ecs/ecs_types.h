@@ -1,5 +1,5 @@
-#ifndef _ECS_TYPE_H_
-#define _ECS_TYPE_H_
+#ifndef _ECS_TYPES_H_
+#define _ECS_TYPES_H_
 
 #include "defines.h"
 
@@ -17,16 +17,16 @@ typedef struct entity_t
 
 typedef struct entities_t
 {
-  entity_t* p_entities;
-}entity_array_t;
+  entity_t* p_array;
+}entities_t;
 
 //components
 
 typedef struct components_t 
 {
   //component_type_t available_component[MAX_COMPONENTS];
-  void* p_components[MAX_COMPONENT_TYPE];
-}components_set_t;
+  void* p_array[MAX_COMPONENT_TYPE];
+}components_t;
 
 
 #endif
