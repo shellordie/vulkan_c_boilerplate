@@ -15,17 +15,17 @@ typedef struct entity_t
   char[MAX_CHAR_LENGTH] name;
 }entity_t;
 
-typedef struct enity_set_t
+typedef struct entities_t
 {
-  entity_t* p_set;
+  entity_t* p_entities;
 }entity_array_t;
 
 //components
 
-typedef struct components_set_t 
+typedef struct components_t 
 {
   //component_type_t available_component[MAX_COMPONENTS];
-  void* p_components_array[MAX_COMPONENT_TYPE];
+  void* p_components[MAX_COMPONENT_TYPE];
 }components_set_t;
 
 

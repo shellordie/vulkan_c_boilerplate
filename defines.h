@@ -23,4 +23,5 @@
  
 #include "core/assert.h"
 #include "core/memory.h"
+#include "core/str.h"
 #endif

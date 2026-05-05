@@ -6,6 +6,7 @@
 
 #include "core/memory.h"
 #include "core/darray.h"
+#include "core/str.h"
 
 #include "platform/platform.h"
 #include "vulkan/vulkan_types.h"
@@ -16,6 +17,7 @@
 #include "vulkan/vulkan_swapchain.h"
 #include "vulkan/vulkan_renderpass.h"
 #include "vulkan/vulkan_framebuffer.h"
+
 
 
 
@@ -49,7 +51,8 @@ int main()
   create_framebuffer(&vulkan,window.drawable_width,window.drawable_height);
 
 
-  darray_test();
+  //darray_test();
+  str_test();
 
   SDL_ShowWindow(window.window);
 
