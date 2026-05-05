@@ -5,7 +5,7 @@ b8 entity_create(char* name,entities_t* p_entities)
   if(p_entities->p_array==NULL)
   {
     printf("initializing srand\n");
-    srand(1_000_000);
+    srand(1000000);
   }
   p_entities->p_array=(entity_t*)darray_reserve(entity_t,MAX_ENTITY);
 
@@ -13,7 +13,7 @@ b8 entity_create(char* name,entities_t* p_entities)
   new_entity.id=(u64)rand();
   new_entity.name=name;
   darray_push(p_entities->p_array,new_entity);
-  return true;
+  return 1;
 }
 
 u64 entity_get_id(char* name,entities_t* p_entities)
@@ -36,20 +36,21 @@ void entity_destroy(entities_t* p_entities)
 {
   assert_failure(p_entities->p_array!=NULL,"entity array not initialized");
   darray_destroy(p_entities->p_array);
-  return true;
 }
 
 void entity_test()
 {
   entities_t entity_world;
-  entity_create("floor");
+  entity_create("floor",&entity_world);
 
   for(u64 i=0;i<darray_get_used(entity_world.p_array);i++)
   {
     entity_t entity=entity_world.p_array[i];
     printf("name = %s\n",entity.name);
-    printf("id= %d\n",entity.id);
+    printf("id= %llu\n",entity.id);
   }
+  printf("array id =%llu\n",entity_get_id("floor",&entity_world));
+  entity_destroy(&entity_world);
 
   assert_failure(1!=1,"break here for test");
  

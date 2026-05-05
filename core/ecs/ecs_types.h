@@ -12,7 +12,7 @@
 typedef struct entity_t 
 {
   u64 id;
-  char[MAX_CHAR_LENGTH] name;
+  char* name;
 }entity_t;
 
 typedef struct entities_t

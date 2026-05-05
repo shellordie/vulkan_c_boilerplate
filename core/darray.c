@@ -39,7 +39,7 @@ void* _darray_push(void* p_mem_address,void* p_data,u64 index)
     assert_failure(p_mem_address!=NULL,"p_mem_address error resizing darray");
   }
   u64 mem_address=(u64)p_mem_address;
-  printf("mem ad u64 =%llu\n",(u64)p_mem_address);
+  //printf("mem ad u64 =%llu\n",(u64)p_mem_address);
   mem_address+=(stride*index);
   mem_copy((void*)mem_address,p_data,stride);
   //update used

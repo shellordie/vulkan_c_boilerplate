@@ -24,4 +24,5 @@
 #include "core/assert.h"
 #include "core/memory.h"
 #include "core/str.h"
+#include "core/darray.h"
 #endif

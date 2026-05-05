@@ -7,6 +7,7 @@
 #include "core/memory.h"
 #include "core/darray.h"
 #include "core/str.h"
+#include "core/ecs/entity.h"
 
 #include "platform/platform.h"
 #include "vulkan/vulkan_types.h"
@@ -52,7 +53,8 @@ int main()
 
 
   //darray_test();
-  str_test();
+  //str_test();
+  entity_test();
 
   SDL_ShowWindow(window.window);
 
