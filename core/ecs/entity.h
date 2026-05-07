@@ -2,11 +2,11 @@
 #define _ENTITY_H_
 
 #include "ecs_types.h"
-
-b8 entity_create(char* name,entities_t* p_enities);
-void entity_pop(char* name,entities_t* p_entities);
-u64 entity_get_id(char* name,entities_t* p_entities);
-void entity_destroy(entities_t* p_entities);
+void init_entities(entities_t* p_enities);
+b8 create_entity(entities_t* p_enities,char* name);
+void delete_entity(entities_t* p_entities,char* name);
+u64 get_entity_id(entities_t entities,char* name);
+void destroy_entity(entities_t* p_entities);
 
 void entity_test();
 

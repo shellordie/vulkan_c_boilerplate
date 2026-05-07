@@ -1,6 +1,11 @@
 #include "entity.h"
 
-b8 entity_create(char* name,entities_t* p_entities)
+void init_entities(entities_t* p_entities)
+{
+  p_entities=NULL;
+}
+
+b8 create_entity(entities_t* p_entities,char* name)
 {
   if(p_entities->p_array==NULL)
   {
@@ -16,11 +21,11 @@ b8 entity_create(char* name,entities_t* p_entities)
   return 1;
 }
 
-u64 entity_get_id(char* name,entities_t* p_entities)
+u64 get_entity_id(entities_t entities,char* name)
 {
-  for(u64 i=0;i<darray_get_used(p_entities->p_array);i++)
+  for(u64 i=0;i<darray_get_used(entities.p_array);i++)
   {
-    entity_t entity=p_entities->p_array[i];
+    entity_t entity=entities.p_array[i];
     if(str_cmp(name,entity.name)==1)
     {
       return i;
@@ -30,9 +35,9 @@ u64 entity_get_id(char* name,entities_t* p_entities)
   return 0;
 }
 
-void entity_pop(char* name,entities_t* p_entities);
+void delete_entity(entities_t* p_entities,char* name);
 
-void entity_destroy(entities_t* p_entities)
+void destroy_entities(entities_t* p_entities)
 {
   assert_failure(p_entities->p_array!=NULL,"entity array not initialized");
   darray_destroy(p_entities->p_array);
@@ -40,9 +45,10 @@ void entity_destroy(entities_t* p_entities)
 
 void entity_test()
 {
-  entities_t entity_world={NULL};
-  entity_create("floor",&entity_world);
-  entity_create("triangle",&entity_world);
+  entities_t entity_world;
+  init_entities(&entity_world);
+  create_entity(&entity_world,"floor");
+  create_entity(&entity_world,"triangle");
 
   for(u64 i=0;i<darray_get_used(entity_world.p_array);i++)
   {
@@ -50,13 +56,13 @@ void entity_test()
     printf("name = %s\n",entity.name);
     printf("id= %llu\n",entity.id);
   }
-  printf("array id =%llu\n",entity_get_id("floor",&entity_world));
+  printf("array id =%llu\n",get_entity_id(entity_world,"floor"));
 
   printf("array capacity = %llu\n",darray_get_capacity(entity_world.p_array));
   printf("array stride  =%llu\n",darray_get_stride(entity_world.p_array));
   printf("array used=%llu\n",darray_get_used(entity_world.p_array));
  
-  entity_destroy(&entity_world);
+  destroy_entity(&entity_world);
 
   assert_failure(1!=1,"break here for test");
  

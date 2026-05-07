@@ -5,7 +5,7 @@
 
 
 // entity type
-#define MAX_CHAR_LENGTH 250
+//#define MAX_CHAR_LENGTH 250
 #define MAX_ENTITY 20000
 #define MAX_COMPONENT_TYPE 100
 
@@ -24,7 +24,6 @@ typedef struct entities_t
 
 typedef struct components_t 
 {
-  //component_type_t available_component[MAX_COMPONENTS];
   void* p_array[MAX_COMPONENT_TYPE];
 }components_t;
 
