@@ -2,7 +2,7 @@
 
 void init_entities(entities_t* p_entities)
 {
-  p_entities=NULL;
+  p_entities->p_array=NULL;
 }
 
 b8 create_entity(entities_t* p_entities,char* name)
@@ -28,7 +28,7 @@ u64 get_entity_id(entities_t entities,char* name)
     entity_t entity=entities.p_array[i];
     if(str_cmp(name,entity.name)==1)
     {
-      return i;
+      return entity.id;
       break;
     }
   }
@@ -43,28 +43,27 @@ void destroy_entities(entities_t* p_entities)
   darray_destroy(p_entities->p_array);
 }
 
-void entity_test()
+void test_entity(entities_t* p_entities_db)
 {
-  entities_t entity_world;
-  init_entities(&entity_world);
-  create_entity(&entity_world,"floor");
-  create_entity(&entity_world,"triangle");
+  //entities_t entity_world;
+  init_entities(p_entities_db);
+  create_entity(p_entities_db,"floor");
+  create_entity(p_entities_db,"triangle");
 
-  for(u64 i=0;i<darray_get_used(entity_world.p_array);i++)
+  for(u64 i=0;i<darray_get_used(p_entities_db->p_array);i++)
   {
-    entity_t entity=entity_world.p_array[i];
+    entity_t entity=p_entities_db->p_array[i];
     printf("name = %s\n",entity.name);
     printf("id= %llu\n",entity.id);
   }
-  printf("array id =%llu\n",get_entity_id(entity_world,"floor"));
+  printf("array id =%llu\n",get_entity_id(*p_entities_db,"floor"));
 
-  printf("array capacity = %llu\n",darray_get_capacity(entity_world.p_array));
-  printf("array stride  =%llu\n",darray_get_stride(entity_world.p_array));
-  printf("array used=%llu\n",darray_get_used(entity_world.p_array));
+  printf("array capacity = %llu\n",darray_get_capacity(p_entities_db->p_array));
+  printf("array stride  =%llu\n",darray_get_stride(p_entities_db->p_array));
+  printf("array used=%llu\n",darray_get_used(p_entities_db->p_array));
  
-  destroy_entity(&entity_world);
-
-  assert_failure(1!=1,"break here for test");
+  //destroy_entities(p_entities_db);
+  // assert_failure(1!=1,"break here for test");
  
 }
 

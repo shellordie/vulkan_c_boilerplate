@@ -8,6 +8,8 @@
 #include "core/darray.h"
 #include "core/str.h"
 #include "core/ecs/entity.h"
+#include "core/ecs/component.h"
+
 
 #include "platform/platform.h"
 #include "vulkan/vulkan_types.h"
@@ -54,7 +56,10 @@ int main()
 
   //darray_test();
   //str_test();
-  entity_test();
+  entities_t entities_db;
+  test_entity(&entities_db);
+  test_component(&entities_db);
+
 
   SDL_ShowWindow(window.window);
 

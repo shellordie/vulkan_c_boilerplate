@@ -8,6 +8,6 @@ void delete_entity(entities_t* p_entities,char* name);
 u64 get_entity_id(entities_t entities,char* name);
 void destroy_entity(entities_t* p_entities);
 
-void entity_test();
+void test_entity(entities_t* p_entities_db);
 
 #endif
