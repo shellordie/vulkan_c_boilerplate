@@ -9,6 +9,7 @@
 #include "core/str.h"
 #include "core/ecs/entity.h"
 #include "core/ecs/component.h"
+#include "core/ecs/event.h"
 
 
 #include "platform/platform.h"
@@ -57,7 +58,8 @@ int main()
   //darray_test();
   //str_test();
   //test_entity();
-  test_component();
+  //test_component();
+  event_test();
 
 
   SDL_ShowWindow(window.window);
