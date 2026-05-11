@@ -13,31 +13,26 @@ void _add_component(components_t* p_components,u64 type,void* p_data,u64 stride)
   assert_failure(type<MAX_COMPONENT_TYPE,"type superior or equal to MAX_COMPONENT_TYPE");
   if(p_components->p_array[type]==NULL)
   {
-    p_components->p_array[type]=darray_create(stride);
+    p_components->p_array[type]=_darray_allocate(stride,1);
   }
-  darray_push(p_components->p_array[type],p_data);
+  u64 index=darray_get_used(p_components->p_array[type]);
+  p_components->p_array[type]=_darray_push((void*)p_components->p_array[type],p_data,index);
 }
 
 
-i64 get_component_id(components_t* p_components,u64 type,entities_t entities,char* entity_name)
+i64 get_component_id(components_t* p_components,u64 type,u64 entity_id)
 {
   assert_failure(type<MAX_COMPONENT_TYPE,"type superior or equal to MAX_COMPONENT_TYPE");
   assert_failure(p_components->p_array[type]!=NULL,"empty array");
-  u64 entity_id=get_entity_id(entities,entity_name);
-  printf("type =%llu\n",type);
   u64 used=darray_get_used(p_components->p_array[type]);
   u64 stride=darray_get_stride(p_components->p_array[type]);
-  printf("stride=%llu\n",stride);
   u64 mem_address=(u64)p_components->p_array[type];
   u64 result=-1;
   for(u64 i=0;i<used;i++)
   {
     u64* p_mem=(u64*)mem_address;
-    printf("entity_id=%llu\n",entity_id);
-    printf("mem id=%llu\n",p_mem[0]);
     if(entity_id==p_mem[0])
     {
-      printf("i=%llu\n",i);
       result=i;
       break;
     }
@@ -55,12 +50,15 @@ void destroy_components(components_t* p_components)
 {
   for(u64 i=0;i<MAX_COMPONENT_TYPE;i++)
   {
-    darray_destroy(p_components->p_array[i]);
+    if(p_components->p_array[i]!=NULL)
+    {
+      darray_destroy(p_components->p_array[i]);
+    }
   }
 }
 
 
-void test_component(entities_t* p_entities_db)
+void test_component()
 {
   typedef enum components_type_t
   {
@@ -89,44 +87,55 @@ void test_component(entities_t* p_entities_db)
   }location_component_t;
 
 
+  entities_t entities_db;
+  init_entities(&entities_db);
+
   components_t components_db;
   init_components(&components_db);
 
-  // add position component
-  u64 id=get_entity_id(*p_entities_db,"floor");
-  position_component_t position={id,20,40,0};
-  _add_component(&components_db,COMPONENT_TYPE_POSITION,(void*)&position,sizeof(position_component_t));
+  // add floor
+  u64 entity_id=create_entity(&entities_db,"floor");
+  printf("entity floor id=%llu\n",entity_id);
+  position_component_t position={entity_id,20,40,0};
+  add_component(&components_db,COMPONENT_TYPE_POSITION,position);
 
-  /*
-  id=get_entity_id(*p_entities_db,"triangle");
-  position.entity_id=id;
+  // add triangle
+  entity_id=create_entity(&entities_db,"triangle");
+  position.entity_id=entity_id;
   position.x=1;
   position.y=1;
   position.z=1;
   add_component(&components_db,COMPONENT_TYPE_POSITION,position);
-  */
 
+  
+  location_component_t location={entity_id,NORTH};
+  add_component(&components_db,COMPONENT_TYPE_LOCATION,location);
+  
+  
   // information
   printf("info about COMPONENT_TYPE_POSITION ARRAY \n");
   void* p_mem=components_db.p_array[COMPONENT_TYPE_POSITION];
-  printf("array capacity = %llu\n",darray_get_capacity(p_mem));
-  printf("array stride  =%llu\n",darray_get_stride(p_mem));
-  printf("array used=%llu\n",darray_get_used(p_mem));
- 
-  u64 comp_id=get_component_id(&components_db,COMPONENT_TYPE_POSITION,*p_entities_db,"floor");
-  printf("the position component of the entity 'floor' is at the index %lli\n",comp_id);
+  darray_info(p_mem);
+
+  printf("info about COMPONENT_TYPE_LOCATION ARRAY \n");
+  darray_info(components_db.p_array[COMPONENT_TYPE_LOCATION]);
+  
+  i64 comp_id=get_component_id(&components_db,COMPONENT_TYPE_POSITION,entity_id);
+  assert_failure(comp_id!=-1,"error with getting the comp id");
+  printf("the position component of the entity 'triangle' is at the index %lli\n",comp_id);
+  
 
   position_component_t* p_mem_acc=p_mem;
   position=p_mem_acc[comp_id];
   printf("entity id =%llu\n",position.entity_id);
-  printf("entity x=%u y=%u z=%u\n",position.x,position.y,position.z);
+  printf("entity x=%d y=%d z=%d\n",position.x,position.y,position.z);
 
+  
   //deleting components
   printf("deleting component at previous id\n");
   delete_component(&components_db,COMPONENT_TYPE_POSITION,comp_id);
-  printf("array capacity = %llu\n",darray_get_capacity(p_mem));
-  printf("array stride  =%llu\n",darray_get_stride(p_mem));
-  printf("array used=%llu\n",darray_get_used(p_mem));
+  darray_info(p_mem);
  
+  destroy_components(&components_db);
   assert_failure(1==0,"break here for test");
 }

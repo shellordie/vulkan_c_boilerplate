@@ -56,9 +56,8 @@ int main()
 
   //darray_test();
   //str_test();
-  entities_t entities_db;
-  test_entity(&entities_db);
-  test_component(&entities_db);
+  //test_entity();
+  test_component();
 
 
   SDL_ShowWindow(window.window);

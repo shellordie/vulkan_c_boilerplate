@@ -20,6 +20,7 @@ void* _darray_pop(void* p_mem_address, u64 index);
 void* darray_resize(void* p_mem_address);
 void _darray_set_info(void* p_mem_address,enum header_t header,u64 data);
 void darray_reset(void* p_mem_address);
+void darray_info(void* p_mem_address);
 void darray_test();
 
 #define darray_create(type) _darray_allocate((u64)sizeof(type),1)

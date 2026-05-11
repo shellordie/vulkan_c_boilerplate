@@ -18,6 +18,7 @@ void* _darray_allocate(u64 stride, u64 capacity)
 
 void _darray_destroy(void* p_mem_address)
 {
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
   // calculate real mem address
   u64 real_mem_address=((u64)p_mem_address-header_size);
   mem_free((void*)real_mem_address);
@@ -26,6 +27,7 @@ void _darray_destroy(void* p_mem_address)
 
 void* _darray_push(void* p_mem_address,void* p_data,u64 index)
 {
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
   u64 mem_used=darray_get_used(p_mem_address);
   u64 capacity=darray_get_capacity(p_mem_address);
   u64 stride=darray_get_stride(p_mem_address);
@@ -34,7 +36,7 @@ void* _darray_push(void* p_mem_address,void* p_data,u64 index)
   if(mem_used==capacity)
   {
     //resize darray
-    printf("resizing ....\n");
+    //printf("resizing ....\n");
     p_mem_address=darray_resize(p_mem_address);
     assert_failure(p_mem_address!=NULL,"p_mem_address error resizing darray");
   }
@@ -89,11 +91,13 @@ void* _darray_pop(void* p_mem_address, u64 index)
 
 void darray_reset(void* p_mem_address)
 {
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
   darray_set_used(p_mem_address,0);
 }
 
 u64 _darray_get_info(void* p_mem_address,enum header_t header)
 {
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
   // calculate real mem address
   u64 mem_address=(u64)p_mem_address;
   mem_address-=header_size;
@@ -117,6 +121,7 @@ u64 _darray_get_info(void* p_mem_address,enum header_t header)
 
 void _darray_set_info(void* p_mem_address,enum header_t header,u64 data)
 {
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
   u64 mem_address=(u64)p_mem_address;
   mem_address-=header_size;
   u64* ptr_mem_address=(u64*)mem_address;
@@ -134,6 +139,15 @@ void _darray_set_info(void* p_mem_address,enum header_t header,u64 data)
     default:break;
   }
 }
+
+void darray_info(void* p_mem_address)
+{
+  assert_failure(p_mem_address!=NULL,"p_mem_address is null");
+  printf("array capacity = %llu \n",darray_get_capacity(p_mem_address));
+  printf("array stride  =%llu \n",darray_get_stride(p_mem_address));
+  printf("array used =%llu \n",darray_get_used(p_mem_address));
+}
+
 
 void darray_test()
 {
