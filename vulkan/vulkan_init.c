@@ -1,6 +1,6 @@
 #include "vulkan_init.h"
 
-int create_vulkan_instance(vulkan_t* vulkan,char* name){
+b8 vulkan_init_create_instance(vulkan_t* p_vulkan,char* name){
   vulkan->p_allocators=0;
 
   // app_info
@@ -36,25 +36,18 @@ int create_vulkan_instance(vulkan_t* vulkan,char* name){
   instance_info.ppEnabledLayerNames=layer_names;
   instance_info.enabledExtensionCount=3;
   instance_info.ppEnabledExtensionNames=extension_names;
-  VkResult result=vkCreateInstance(&instance_info,vulkan->p_allocators,&vulkan->instance);
-  
-  if(result!=VK_SUCCESS)
-  {
-    return -1;
-    printf("vulkan instance creation failed !\n");
-  }
-  printf("vulkan instance created !\n");
+  vk_check_ex(
+      vkCreateInstance(&instance_info,p_vulkan->p_allocators,&p_vulkan->instance),
+      "create instance failed !",
+      "vulkan instance created !"
+      );
 
-  PFN_vkCreateDebugUtilsMessengerEXT pfn_create_debug_utils_messenger =(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(vulkan->instance,"vkCreateDebugUtilsMessengerEXT");
-  result=pfn_create_debug_utils_messenger(vulkan->instance,&debug_messenger_info,vulkan->p_allocators,&vulkan->debug_messenger);
-  if(result!=VK_SUCCESS)
-  {
-    return -1;
-    printf("debug messenger creation failed!\n");
-  }
-  printf("debug messenger created!\n");
-
-  return 0;
+  PFN_vkCreateDebugUtilsMessengerEXT pfn_create_debug_utils_messenger =(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_vulkan->instance,"vkCreateDebugUtilsMessengerEXT");
+  vk_check_ex(
+      pfn_create_debug_utils_messenger(p_vulkan->instance,&debug_messenger_info,p_vulkan->p_allocators,&p_vulkan->debug_messenger),
+      "debug messenger creation failed!",
+      "debug messenger created!");
+  return 1;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
@@ -78,5 +71,18 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
   }
   return VK_TRUE;
 }
+
+void vulkan_init_destroy(vulkan_t* p_vulkan)
+{
+  // destroy framebuffers
+  // destroy renderpass
+  // destroy surface
+  // destroy swapchain
+  // destroy command buffers
+  // destroy command pool
+  // destroy logical_device
+  // destroy instance
+}
+
 
 

@@ -2,7 +2,8 @@
 #define VULKAN_INIT_H
 #include "vulkan_types.h"
 
-int create_vulkan_instance(vulkan_t* vulkan,char* name);
+b8 vulkan_init_create_instance(vulkan_t* p_vulkan,char* name);
+void vulkan_init_destroy(vulkan_t* p_vulkan);
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
@@ -10,4 +11,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
     void* user_data
 );
+
+
+
 #endif
