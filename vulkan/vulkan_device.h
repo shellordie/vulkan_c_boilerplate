@@ -2,9 +2,9 @@
 #define _VULKAN_DEVICE_H_
 #include "vulkan_types.h"
 
-int get_physical_device(vulkan_t* vulkan);
-int create_logical_device(vulkan_t* vulkan);
-int get_global_queue_from_logical_device(vulkan_t* vulkan);
+int vulkan_device_get_physical_device(vulkan_t* vulkan);
+int vulkan_device_create_logical_device(vulkan_t* vulkan);
+int vulkan_device_get_global_queue(vulkan_t* vulkan);
 
 
 #endif

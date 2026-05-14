@@ -30,6 +30,12 @@ typedef struct framebuffer_t
   VkFramebuffer* p_handles;
 }framebuffer_t;
 
+typedef struct command_t
+{
+  VkCommandPool command_pool;
+  VkCommandBuffer command_buffer;
+}command_t;
+
 typedef struct vulkan_t 
 {
   VkInstance instance;
@@ -43,8 +49,7 @@ typedef struct vulkan_t
   uint32_t global_queue_family_index;
   uint32_t global_queues_count;
   VkQueue global_queue;
-  VkCommandPool command_pool;
-  VkCommandBuffer command_buffer;
+  command_t command;
   swapchain_t swapchain;
   surface_t surface;
   VkRenderPass renderpass;

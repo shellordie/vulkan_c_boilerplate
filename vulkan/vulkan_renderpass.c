@@ -1,6 +1,11 @@
 #include "vulkan_renderpass.h"
 
-b8 vulkan_renderpass_create(vulkan_t* p_vulkan)
+b8 vulkan_renderpass_create(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators,
+    VkFormat image_format,
+    VkRenderPass* p_renderpass
+    )
 {
   VkRenderPassCreateInfo renderpass_create_info;
   renderpass_create_info.sType=VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -11,7 +16,7 @@ b8 vulkan_renderpass_create(vulkan_t* p_vulkan)
   {
     {
       0,
-      p_vulkan->swapchain.image_format,
+      image_format,
       VK_SAMPLE_COUNT_1_BIT,
       VK_ATTACHMENT_LOAD_OP_CLEAR,
       VK_ATTACHMENT_STORE_OP_STORE,
@@ -53,19 +58,24 @@ b8 vulkan_renderpass_create(vulkan_t* p_vulkan)
   renderpass_create_info.pDependencies=0;
 
   vk_check_ex(
-      vkCreateRenderPass(p_vulkan->logical_device,&renderpass_create_info,p_vulkan->p_allocators,&p_vulkan->renderpass),
+      vkCreateRenderPass(logical_device,&renderpass_create_info,p_allocators,p_renderpass),
       "renderpass creation failed!",
       "renderpass created !");
   return 1;
 }
 
-b8 vulkan_renderpass_begin(vulkan_t* p_vulkan,uint32_t image_index,uint32_t width,uint32_t height)
+b8 vulkan_renderpass_begin(
+    VkCommandBuffer command_buffer,
+    VkRenderPass renderpass,
+    VkFramebuffer framebuffer,
+    u16 width,
+    u16 height)
 {
   VkRenderPassBeginInfo renderpass_begin_info;
   renderpass_begin_info.sType=VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
   renderpass_begin_info.pNext=0;
-  renderpass_begin_info.renderPass=p_vulkan->renderpass;
-  renderpass_begin_info.framebuffer=p_vulkan->framebuffer.p_handles[image_index];
+  renderpass_begin_info.renderPass=renderpass;
+  renderpass_begin_info.framebuffer=framebuffer;
   VkRect2D render_area={{0,0},{width,height}};
   renderpass_begin_info.renderArea=render_area;
   renderpass_begin_info.clearValueCount=1;
@@ -81,18 +91,22 @@ b8 vulkan_renderpass_begin(vulkan_t* p_vulkan,uint32_t image_index,uint32_t widt
   subpass_begin_info.pNext=0;
   subpass_begin_info.contents=VK_SUBPASS_CONTENTS_INLINE;
 
-  vkCmdBeginRenderPass2(p_vulkan->command_buffer,&renderpass_begin_info,&subpass_begin_info);
+  vkCmdBeginRenderPass2(command_buffer,&renderpass_begin_info,&subpass_begin_info);
   return 1;
 }
 
-b8 vulkan_renderpass_end(vulkan_t* p_vulkan)
+b8 vulkan_renderpass_end(VkCommandBuffer command_buffer)
 {
-  vkCmdEndRenderPass(p_vulkan->command_buffer);
+  vkCmdEndRenderPass(command_buffer);
   return 1;
 }
 
-void vulkan_renderpass_destroy(vulkan_t* p_vulkan)
+void vulkan_renderpass_destroy(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators,
+    VkRenderPass renderpass
+    )
 {
-  vkDestroyRenderpass(p_vulkan->logical_device,p_vulkan->renderapss,p_vulkan->p_allocators);
+  vkDestroyRenderpass(logical_device,renderapss,p_allocators);
 }
 

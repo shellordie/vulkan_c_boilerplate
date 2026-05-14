@@ -75,6 +75,15 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
 void vulkan_init_destroy(vulkan_t* p_vulkan)
 {
   // destroy framebuffers
+  for(u64 i=0;i<darray_get_used(p_vulkan->framabuffer.p_handles);i++)
+  {
+    if(p_vulkan->framabuffer.p_handles[i]!=NULL)
+    {
+      vkDestroyFramebuffer(p_vulkan->logical_device,p_vulkan->framebuffer.p_handles[i],p_vulkan->p_allocators);
+      p_vulkan->framabuffer.p_handles[i]=NULL;
+    }
+  }
+  darray_destroy(p_vulkan->framabuffer.p_handles);
   // destroy renderpass
   // destroy surface
   // destroy swapchain

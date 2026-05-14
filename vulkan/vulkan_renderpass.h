@@ -3,10 +3,25 @@
 
 #include "vulkan_types.h"
 
-b8 vulkan_renderpass_create(vulkan_t* p_vulkan);
-b8 vulkan_renderpass_begin(vulkan_t* p_vulkan,uint32_t image_index,uint32_t width,uint32_t height);
-b8 vulkan_renderpass_end(vulkan_t* p_vulkan);
-void vulkan_renderpass_destroy(vulkan_t* p_vulkan);
+b8 vulkan_renderpass_create(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators,
+    VkFormat image_format,
+    VkRenderPass* p_renderpass);
+
+b8 vulkan_renderpass_begin(
+    VkCommandBuffer command_buffer,
+    VkRenderPass renderpass,
+    VkFramebuffer framebuffer,
+    u16 width,
+    u16 height);
+
+b8 vulkan_renderpass_end(VkCommandBuffer command_buffer);
+
+void vulkan_renderpass_destroy(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators,
+    VkRenderPass renderpass);
 #endif
 
 
