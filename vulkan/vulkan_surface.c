@@ -1,6 +1,6 @@
 #include "vulkan_surface.h"
 
-int create_surface(vulkan_t* vulkan,HINSTANCE instance_handle,HWND window_handle)
+b8 vulkan_surface_create(vulkan_t* p_vulkan,HINSTANCE instance_handle,HWND window_handle)
 {
   VkWin32SurfaceCreateInfoKHR surface_create_info;
   surface_create_info.sType=VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -10,11 +10,15 @@ int create_surface(vulkan_t* vulkan,HINSTANCE instance_handle,HWND window_handle
   surface_create_info.hinstance=instance_handle;
   surface_create_info.hwnd=window_handle;
   //
-  VkResult result=vkCreateWin32SurfaceKHR(vulkan->instance,&surface_create_info,vulkan->p_allocators,&vulkan->surface.handle);
+  vk_check_ex(
+      vkCreateWin32SurfaceKHR(p_vulkan->instance,&surface_create_info,p_vulkan->p_allocators,&p_vulkan->surface.handle),
+      "win32 surface creation failed",
+      "win32 surface created");
 
-  (result!=VK_SUCCESS)?printf("win32 surface creation failed ! \n"):-1;
+  return 1;
+}
 
-  printf("win32 surface created !\n");
-
-  return 0;
+void vulkan_surface_destroy(vulkan_t* p_vulkan)
+{
+  VkDestroySurfaceKHR(p_vulkan->instance,p_vulkan->surface.handle,p_vulkan->p_allocators);
 }

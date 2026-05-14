@@ -1,6 +1,6 @@
 #include "vulkan_swapchain.h"
 
-int create_swapchain(vulkan_t* vulkan,uint16_t width, uint16_t height)
+b8 vulkan_swapchain_create(vulkan_t* p_vulkan,uint16_t width, uint16_t height)
 {
   //vulkan->swapchain;
   vulkan->swapchain.image_format=VK_FORMAT_B8G8R8A8_SRGB;
@@ -11,9 +11,9 @@ int create_swapchain(vulkan_t* vulkan,uint16_t width, uint16_t height)
   swapchain_create_info.sType=VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapchain_create_info.pNext=NULL;
   swapchain_create_info.flags=0;
-  swapchain_create_info.surface=vulkan->surface.handle;
+  swapchain_create_info.surface=p_vulkan->surface.handle;
   swapchain_create_info.minImageCount=2;
-  swapchain_create_info.imageFormat=vulkan->swapchain.image_format;
+  swapchain_create_info.imageFormat=p_vulkan->swapchain.image_format;
   swapchain_create_info.imageColorSpace=VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
   VkExtent2D present_image;
@@ -27,7 +27,7 @@ int create_swapchain(vulkan_t* vulkan,uint16_t width, uint16_t height)
   swapchain_create_info.queueFamilyIndexCount=1;
 
   //uint32_t queue_indices=QUEUE_FAMILY_INDEX;
-  swapchain_create_info.pQueueFamilyIndices=&vulkan->global_queue_family_index;
+  swapchain_create_info.pQueueFamilyIndices=&p_vulkan->global_queue_family_index;
 
   swapchain_create_info.preTransform=VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
   swapchain_create_info.compositeAlpha=VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -35,66 +35,44 @@ int create_swapchain(vulkan_t* vulkan,uint16_t width, uint16_t height)
   swapchain_create_info.clipped=VK_TRUE;
   swapchain_create_info.oldSwapchain=VK_NULL_HANDLE;
   
-  VkResult result=vkCreateSwapchainKHR(vulkan->logical_device,&swapchain_create_info,vulkan->p_allocators,&vulkan->swapchain.handle);
-
-  if(result!=VK_SUCCESS)
-  {
-    printf("swapchain creation failed! \n");
-    return -1;
-  }
-
-  if(result!=VK_SUCCESS)
-  {
-    printf("swapchain creation failed! \n");
-    return -1;
-  }
+  vk_check_ex(vkCreateSwapchainKHR(p_vulkan->logical_device,&swapchain_create_info,p_vulkan->p_allocators,&p_vulkan->swapchain.handle),
+      "swapchain creation failed!",
+      "swapchain creation failed!");
 
   VkFenceCreateInfo fence_create_info;
   fence_create_info.sType=VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
   fence_create_info.pNext=0;
   fence_create_info.flags=0;
-  if(vkCreateFence(vulkan->logical_device,&fence_create_info,vulkan->p_allocators,&vulkan->swapchain.fence))
-  {
-    printf("swapchain fence creation failed \n");
-    return -1;
-  }
-  printf("swapchain fence created \n");
-
-  printf("swapchain created ! \n");
-  return  0;
+  vk_check_ex(
+      vkCreateFence(p_vulkan->logical_device,&fence_create_info,p_vulkan->p_allocators,&p_vulkan->swapchain.fence),
+      "swapchain fence creation failed ",
+      "swapchain fence created");
+  return  1;
 }
 
 
-int get_swapchain_images(vulkan_t* vulkan) 
+b8 vulkan_swapchain_get_images(vulkan_t* p_vulkan) 
 {
-  VkResult result=vkGetSwapchainImagesKHR(vulkan->logical_device,vulkan->swapchain.handle,&vulkan->swapchain.images_count,0);
-  if(result!= VK_SUCCESS)
-  {
-    return -1;
-  }
+  vk_check(vkGetSwapchainImagesKHR(vulkan->logical_device,vulkan->swapchain.handle,&vulkan->swapchain.images_count,0),"getting swapchain image count failed");
   
   printf("swapchain images count =%d !\n",vulkan->swapchain.images_count);
 
   //allocate memory for swapchain images and their views
-  vulkan->swapchain.p_images=mem_allocate(vulkan->swapchain.images_count*sizeof(VkImage));
-  vulkan->swapchain.p_images_views=mem_allocate(vulkan->swapchain.images_count*sizeof(VkImageView));
+  p_vulkan->swapchain.p_images=darray_reserve(VkImage,p_vulkan->swapchain.images_count);
+  p_vulkan->swapchain.p_images_views=darray_reserve(VkImageView,p_vulkan->swapchain.images_count);
 
   // get swapchain images
-  result=vkGetSwapchainImagesKHR(vulkan->logical_device,vulkan->swapchain.handle,&vulkan->swapchain.images_count,vulkan->swapchain.p_images);
-  if(result!= VK_SUCCESS)
-  {
-    printf("failed to get swapchain images !\n");
-    return -1;
-  }
-  printf("swapchain images retrieved !\n");
+  vk_check_ex(
+      vkGetSwapchainImagesKHR(vulkan->logical_device,vulkan->swapchain.handle,&vulkan->swapchain.images_count,vulkan->swapchain.p_images),
+      "failed to get swapchain images!",
+      "swapchain images retrieved !");
 
   // create swapchain images views
-  create_swapchain_images_views(vulkan);
-
-  return 0;
+  vulkan_swapchain_create_images_views(p_vulkan);
+  return 1;
 }
 
-int create_swapchain_images_views(vulkan_t* vulkan)
+b8 vulkan_swapchain_create_images_views(vulkan_t* p_vulkan)
 {
   uint8_t count;
   for(count=0;count<2;count++)
@@ -106,49 +84,35 @@ int create_swapchain_images_views(vulkan_t* vulkan)
     image_view_info.flags=0;
     image_view_info.image=vulkan->swapchain.p_images[count];
     image_view_info.viewType=VK_IMAGE_VIEW_TYPE_2D;
-    image_view_info.format=vulkan->swapchain.image_format;
+    image_view_info.format=p_vulkan->swapchain.image_format;
     VkComponentMapping components={VK_COMPONENT_SWIZZLE_R,VK_COMPONENT_SWIZZLE_G,VK_COMPONENT_SWIZZLE_B,VK_COMPONENT_SWIZZLE_A};
     image_view_info.components=components;
     VkImageSubresourceRange subresource={VK_IMAGE_ASPECT_COLOR_BIT,0,VK_REMAINING_MIP_LEVELS,0,VK_REMAINING_ARRAY_LAYERS};
     image_view_info.subresourceRange=subresource;
 
     //create the views
-    VkResult result=vkCreateImageView(vulkan->logical_device,&image_view_info,vulkan->p_allocators,&vulkan->swapchain.p_images_views[count]);
-
-    if(result!=VK_SUCCESS)
-    {
-      printf("image view creation failed ! \n"); 
-      break;
+    vk_check(
+        vkCreateImageView(vulkan->logical_device,&image_view_info,vulkan->p_allocators,&vulkan->swapchain.p_images_views[count]),
+        "image view creation failed !"); 
     }
-
-  }
 
   printf("images views created ! \n");
-  return 0;
+  return 1;
 }
 
-int get_presentable_image(vulkan_t* p_vulkan,uint32_t* p_image_index)
+b8 vulkan_swapchain_get_presentable_image(vulkan_t* p_vulkan,uint32_t* p_image_index)
 {
     // query available swapchain image
-    if(vkAcquireNextImageKHR(p_vulkan->logical_device,p_vulkan->swapchain.handle,UINT64_MAX,NULL,p_vulkan->swapchain.fence,p_image_index)!=VK_SUCCESS)
-    {
-      return -1;
-    }
+    vk_check(vkAcquireNextImageKHR(p_vulkan->logical_device,p_vulkan->swapchain.handle,UINT64_MAX,NULL,p_vulkan->swapchain.fence,p_image_index),"failed to acquire an image");
 
-    if(vkGetFenceStatus(p_vulkan->logical_device,p_vulkan->swapchain.fence)!=VK_SUCCESS)
-    {
-      return -1;
-    }
+    vk_check(vkGetFenceStatus(p_vulkan->logical_device,p_vulkan->swapchain.fence),"failed getting fence status");
 
-    if(vkResetFences(p_vulkan->logical_device,1,&p_vulkan->swapchain.fence)!=VK_SUCCESS)
-    {
-      return -1;
-    }
-    return 0;
+    vk_check(vkResetFences(p_vulkan->logical_device,1,&p_vulkan->swapchain.fence),"failed to reset fence status");
+    return 1;
 }
 
 
-int present_image(vulkan_t* p_vulkan,uint32_t* p_image_index)    
+b8 vulkan_swapchain_present_image(vulkan_t* p_vulkan,uint32_t* p_image_index)    
 {
   VkResult swapchain_result;
 
@@ -163,16 +127,27 @@ int present_image(vulkan_t* p_vulkan,uint32_t* p_image_index)
   present_info.pImageIndices=p_image_index;
   present_info.pResults=&swapchain_result;
 
-  if(vkQueuePresentKHR(p_vulkan->global_queue,&present_info)!=VK_SUCCESS)
+  vk_check_ex(vkQueuePresentKHR(p_vulkan->global_queue,&present_info),"presentation failed","presentation success");
+  return 1;
+}
+
+void vulkan_swapchain_destroy(vulkan_t* p_vulkan)
+{
+  //destroy fences
+
+  vkDestroyFence(p_vulkan->logical_device,p_vulkan->swapchain.fence,p_vulkan->p_allocators);
+  //destroy imageViews
+  for(u64 i=0;i<darray_get_used(p_vulkan->swapchain.images_count);i++)
   {
-    return -1;
+    vkDestroyImageView(p_vulkan->logical_device,p_vulkan->swapchain.p_images_views[i],p_vulkan->p_allocators);
   }
-  if(swapchain_result!=VK_SUCCESS)
-  {
-    return -1;
-  }
-  
-  return 0;
+  darray_destroy(p_vulkan->swapchain.p_images_views);
+
+  ////destroy images
+  darray_destroy(p_vulkan->swapchain.p_images);
+
+  //destroy swapchain
+  vkDestroySwapchainKHR(p_vulkan->logical_device,p_vulkan->swapchain.handle,p_vulkan->p_allocators);
 }
 
 
