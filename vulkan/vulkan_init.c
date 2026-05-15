@@ -86,6 +86,7 @@ void vulkan_init_destroy(vulkan_t* p_vulkan)
   darray_destroy(p_vulkan->framabuffer.p_handles);
   // destroy renderpass
   // destroy surface
+  // destroy fences
   // destroy swapchain
   // destroy command buffers
   // destroy command pool

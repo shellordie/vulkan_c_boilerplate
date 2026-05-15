@@ -2,10 +2,51 @@
 #define _VULKAN_SWAPCHAIN_H_
 #include "vulkan_types.h"
 
-b8 vulkan_swapchain_create(vulkan_t* p_vulkan,uint16_t width,uint16_t height);
-b8 vulkan_swapchain_get_images(vulkan_t* p_vulkan);
-b8 vulkan_swapchain_create_images_views(vulkan_t* vulkan);
-b8 vulkan_swapchain_get_presentable_image(vulkan_t* p_vulkan,uint32_t* p_image_index);
-b8 vulkan_swapchain_present_image(vulkan_t* p_vulkan,uint32_t* p_image_index);
-void vulkan_swapchain_destroy(vulkan_t* p_vulkan);
+b8 vulkan_swapchain_create(
+    VkDevice logical_device,
+    VkAllocationsCallbacks* p_alocators,
+    VkSurfaceKHR surface,
+    VkFormat image_format,
+    u32 image_count,
+    u32* p_queue_family_index,
+    u16 width,
+    u16 height,
+    VkSwapchainKHR* p_swapchain
+    );
+
+b8 vulkan_swapchain_get_images(
+    VkDevice logical_device,
+    VkSwapchainKHR swapchain,
+    u32* p_image_count,
+    VkImage* p_images,
+    );
+
+b8 vulkan_swapchain_create_image_view(
+    VkDevice logical_device,
+    VkAllocationsCallbacks* p_allocators,
+    VkImage image,
+    VkFormat image_format,
+    VkImageView* p_image_view
+    );
+
+b8 vulkan_swapchain_get_presentable_image(
+    VkDevice logical_device,
+    VkSwapchainKHR swapchain,
+    VkFence fence,
+    u32* p_image_index);
+
+b8 vulkan_swapchain_present_image(
+    VkQueue present_queue,
+    VkSwapchainKHR* p_swapchain,
+    u32* p_image_index
+    );
+
+void vulkan_swapchain_destroy(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators,
+    VkSwapchainKH swapchain,
+    u32 image_count,
+    VkImage* p_images,
+    VkImageView* p_image_views
+    );
 #endif
