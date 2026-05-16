@@ -88,7 +88,6 @@ void vulkan_init_destroy(vulkan_t* p_vulkan)
   // destroy surface
   // destroy fences
   // destroy swapchain
-  // destroy command buffers
   // destroy command pool
   // destroy logical_device
   // destroy instance
