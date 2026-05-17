@@ -1,15 +1,20 @@
 #include "vulkan_init.h"
 
-b8 vulkan_init_create_instance(vulkan_t* p_vulkan,char* name){
-  vulkan->p_allocators=0;
+b8 vulkan_init_create_instance(
+    VkAllocationCallbacks* p_allocators,
+    char* p_app_name,
+    VkInstance* p_vk_instance
+    )
+{
+  p_allocators=0;
 
   // app_info
   VkApplicationInfo app_info={};
   app_info.sType=VK_STRUCTURE_TYPE_APPLICATION_INFO;
   app_info.pNext=NULL;
-  app_info.pApplicationName=name;
+  app_info.pApplicationName=p_app_name;
   app_info.applicationVersion=VK_MAKE_VERSION(0,0,1);
-  app_info.pEngineName=name;
+  app_info.pEngineName=p_app_name;
   app_info.engineVersion=VK_MAKE_VERSION(0,0,1);
   app_info.apiVersion=VK_MAKE_VERSION(1,2,200);
 
@@ -37,7 +42,7 @@ b8 vulkan_init_create_instance(vulkan_t* p_vulkan,char* name){
   instance_info.enabledExtensionCount=3;
   instance_info.ppEnabledExtensionNames=extension_names;
   vk_check_ex(
-      vkCreateInstance(&instance_info,p_vulkan->p_allocators,&p_vulkan->instance),
+      vkCreateInstance(&instance_info,p_allocators,p_vk_instance),
       "create instance failed !",
       "vulkan instance created !"
       );

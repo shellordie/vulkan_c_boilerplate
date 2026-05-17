@@ -1,9 +1,14 @@
-#ifndef VULKAN_INIT_H
-#define VULKAN_INIT_H
+#ifndef VULKAN_INSTANCE_H
+#define VULKAN_INSTANCE_H
 #include "vulkan_types.h"
 
-b8 vulkan_init_create_instance(vulkan_t* p_vulkan,char* name);
-void vulkan_init_destroy(vulkan_t* p_vulkan);
+b8 vulkan_instance_create(
+    VkAllocationCallbacks* p_allocators,
+    char* p_app_name,
+    VkInstance* p_vk_instance
+    );
+
+void vulkan_instance_destroy();
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,

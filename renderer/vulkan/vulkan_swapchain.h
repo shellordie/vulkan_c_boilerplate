@@ -7,7 +7,6 @@ b8 vulkan_swapchain_create(
     VkAllocationsCallbacks* p_alocators,
     VkSurfaceKHR surface,
     VkFormat image_format,
-    u32 image_count,
     u32* p_queue_family_index,
     u16 width,
     u16 height,
@@ -24,8 +23,8 @@ b8 vulkan_swapchain_get_images(
 b8 vulkan_swapchain_create_image_view(
     VkDevice logical_device,
     VkAllocationsCallbacks* p_allocators,
-    VkImage image,
     VkFormat image_format,
+    VkImage image,
     VkImageView* p_image_view
     );
 

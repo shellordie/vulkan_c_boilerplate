@@ -1,0 +1,115 @@
+#include "renderer_backend.h" 
+
+b8 renderer_backend_init(
+    vulkan_t* p_vulkan,
+    HINSTANCE hinstance_handle,
+    HWND window_handle,
+    char* p_app_name
+    u16 window_width,
+    u16 window_height
+    )
+{
+  //vulkan instance
+  vulkan_instance_create(p_vulkan->p_allocators,p_app_name,&p_vulkan->instance);
+
+  //create surface
+  vulkan_surface_create(
+      p_vulkan->instance,
+      p_vulkan->p_allocators,
+      hinstance_handle,
+      window_handle,
+      &p_vulkan->suface.handle
+      );
+
+  // get physical device
+  vulkan_device_get_physical_device(
+      p_vulkan->instance,
+      &p_vulkan->device.physical_device
+      );
+
+  // creeate logical device
+  vk_queue_t* p_queue=&p_vulkan->queue;
+  p_queue->queue_count=1;
+  p_queue->global_family_index=0;
+  p_queue->p_handles=darray_reserver(VkQueue,queue_count);
+  darray_push(p_handles,1);
+
+  vulkan_device_logical_device_create(
+      p_vulkan->device.physical_device,
+      p_vulkan->p_allocators,
+      p_queue->queue_count,
+      &p_queue->global_family_index
+      p_queue->queue_count,
+      &p_vulkan->device.logical_device
+      );
+
+  //get queue
+  vulkan_device_get_queue(
+      p_vulkan->device.logical_device,
+      p_vulkan.queue.global_family_index,
+      0,
+      p_vulkan.queue.p_handles
+      );
+
+  // create command pool
+  vulkan_command_create_pool(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->queue.global_family_index,
+      &p_vulkan->command.command_pool
+      );
+
+  // allocate command buffer
+  vulkan_command_allocate_buffer(
+      logical_device,
+      p_allocators,
+      p_vulkan->command.command_pool,
+      1,
+      p_vulkan.command.p_command_buffers
+      ); 
+
+  // create swapchain
+  p_vulkan->swapchain.image_count=2;
+  p_vulkan->swapchain.image_format=VK_FROMAT_B8G8R8A8_SRGB;
+  vulkan_swapchain_create(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->surface.handle,
+      p_vulkan->swapchain.image_format,
+      &p_vulkan->swapchain.global_queue_index,
+      window_width,
+      window_height,
+      &p_vulkan->swapchain.handle
+      );
+
+  // vulkan swapchain get images
+  
+  p_vulkan->swapchain.p_images=darray_reserve(VkImage,p_vulkan->swapchain.image_count);
+  vulkan_swapchain_get_images(
+      p_vulkan->device.logical_device,
+      p_vulkan->swapchain.handle,
+      &p_vulkan->swapchain.image_count,
+      p_vulkan->swapchain.p_images
+      );
+
+  // vulkan swapchain create image view
+
+  p_vulkan->swapchain.p_images_views=darray_reserve(VkImageView,p_vulkan->swapchain.image_count);
+  for(u32 i=0;i<p_vulkan->swapchain.image_count;i++)
+  {
+    vulkan_swapchain_create_image_view(
+        p_vulkan->device.logical_device,
+        p_vulkan->p_allocators,
+        p_vulkan->swapchain.image_format,
+        p_vulkan->swapchain.p_images[i],
+        p_vulkan->swapchain.p_images_views[i]
+        );
+  }
+  // create swapchain fence
+
+  create_renderpass(&vulkan); 
+  create_framebuffer(&vulkan,window.drawable_width,window.drawable_height);
+
+
+}
+
