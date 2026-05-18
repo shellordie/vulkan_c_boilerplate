@@ -1,4 +1,4 @@
-#include "vulkan_init.h"
+#include "vulkan_instance.h"
 
 b8 vulkan_init_create_instance(
     VkAllocationCallbacks* p_allocators,
@@ -77,25 +77,13 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
   return VK_TRUE;
 }
 
-void vulkan_init_destroy(vulkan_t* p_vulkan)
+
+void vulkan_instance_destroy(
+    VkInstance vk_instance,
+    VkAllocationCallbacks* p_allocators
+    )
 {
-  // destroy framebuffers
-  for(u64 i=0;i<darray_get_used(p_vulkan->framabuffer.p_handles);i++)
-  {
-    if(p_vulkan->framabuffer.p_handles[i]!=NULL)
-    {
-      vkDestroyFramebuffer(p_vulkan->logical_device,p_vulkan->framebuffer.p_handles[i],p_vulkan->p_allocators);
-      p_vulkan->framabuffer.p_handles[i]=NULL;
-    }
-  }
-  darray_destroy(p_vulkan->framabuffer.p_handles);
-  // destroy renderpass
-  // destroy surface
-  // destroy fences
-  // destroy swapchain
-  // destroy command pool
-  // destroy logical_device
-  // destroy instance
+  vkDestroyInstance(vk_instance,p_allocators);
 }
 
 

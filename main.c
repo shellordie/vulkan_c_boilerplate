@@ -13,6 +13,8 @@
 
 
 #include "platform/platform.h"
+#include "renderer/renderer_backend.h"
+/*
 #include "vulkan/vulkan_types.h"
 #include "vulkan/vulkan_init.h"
 #include "vulkan/vulkan_surface.h"
@@ -21,6 +23,7 @@
 #include "vulkan/vulkan_swapchain.h"
 #include "vulkan/vulkan_renderpass.h"
 #include "vulkan/vulkan_framebuffer.h"
+*/
 
 
 
@@ -42,19 +45,16 @@ int main()
   
 
   create_window(&window);
-  create_vulkan_instance(&vulkan,window.name);
-  create_surface(&vulkan,window.instance_handle,window.window_handle);
-  get_physical_device(&vulkan);
-  create_logical_device(&vulkan);
-  get_global_queue_from_logical_device(&vulkan);
-  create_command_pool(&vulkan);
-  allocate_command_buffer(&vulkan); 
-  create_swapchain(&vulkan,window.drawable_width,window.drawable_height);
-  get_swapchain_images(&vulkan);
-  create_renderpass(&vulkan); 
-  create_framebuffer(&vulkan,window.drawable_width,window.drawable_height);
 
-
+  renderer_backend_init(
+      &vulkan,
+      window.instance_handle,
+      window.window_handle,
+      window.name,
+      window.drawable_width,
+      window.drawable_height
+      );
+  
   //darray_test();
   //str_test();
   //test_entity();
@@ -75,6 +75,7 @@ int main()
         window.closed=1;
       }
     }
+    /*
 
     // frame start
     //
@@ -113,6 +114,7 @@ int main()
     present_image(&vulkan,&image_index);
 
     // end frame
+    // */
 
   }
   

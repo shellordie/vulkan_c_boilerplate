@@ -5,8 +5,8 @@ b8 renderer_backend_init(
     HINSTANCE hinstance_handle,
     HWND window_handle,
     char* p_app_name
-    u16 window_width,
-    u16 window_height
+    u16 drawable_width,
+    u16 drawable_height 
     )
 {
   //vulkan instance
@@ -60,11 +60,13 @@ b8 renderer_backend_init(
       );
 
   // allocate command buffer
+  p_vulkan->command.command_buffer_count=1;
+  p_vulkan->command.p_command_buffers=darray_reserve(VkCommandBuffer,p_vulkan->command.command_buffer_count);
   vulkan_command_allocate_buffer(
       logical_device,
       p_allocators,
       p_vulkan->command.command_pool,
-      1,
+      p_vulkan->command.command_buffer_count,
       p_vulkan.command.p_command_buffers
       ); 
 
@@ -92,7 +94,7 @@ b8 renderer_backend_init(
       p_vulkan->swapchain.p_images
       );
 
-  // vulkan swapchain create image view
+  // vulkan swapchain create images views
 
   p_vulkan->swapchain.p_images_views=darray_reserve(VkImageView,p_vulkan->swapchain.image_count);
   for(u32 i=0;i<p_vulkan->swapchain.image_count;i++)
@@ -106,10 +108,98 @@ b8 renderer_backend_init(
         );
   }
   // create swapchain fence
+  vulkan_fence_create(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      &p_vulkan->swapchain.fence
+      );
 
-  create_renderpass(&vulkan); 
-  create_framebuffer(&vulkan,window.drawable_width,window.drawable_height);
+  // create render pass
+  vulkan_renderpass_create(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->swapchain.image_format,
+      p_vulkan->renderpass.handle
+      ); 
 
+  // create frame buffers 
+
+  p_vulkan->framebuffer.p_handles=darray_reserve(VkFramebuffer,p_vulkan->swapchain.image_count);
+
+  for(u32 i=0;i<p_vulkan->swapchain.image_count;i++){
+    vulkan_framebuffer_create(
+        p_vulkan->device.logical_device,
+        p_vulkan->p_allocators,
+        p_vulkan->renderpass.handle,
+        p_vulkan->swapchain.p_image_views[i],
+        drawable_width,
+        drawable_height,
+        p_vulkan->framebuffer.p_handles[i]
+        );
+  }
 
 }
+
+
+void renderer_backend_shutdown(vulkan_t* p_vulkan)
+{
+  //destroy framebuffer
+  for(u32 i=0;i<p_vulkan->swapchain.image_count;i++){
+    vulkan_framebuffer_destroy(
+        p_vulkan->device.logical_device,
+        p_vulkan->p_allocators,
+        p_vulkan->framebuffer.p_handles[i]
+        );
+  }
+  darray_destroy(p_vulkan->framebuffer.p_handles);
+
+  //destroy renderpass
+  vulkan_renderpass_destroy(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan.renderpass.handle
+      );
+
+  // destroy swapchain fence
+  vulkan_fence_destroy(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->swapchain.fence
+      );
+
+  // destroy swapchain 
+  vulkan_swapchain_destroy( 
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->swapchain.handle,
+      p_vulkan->swapchain.image_count,
+      p_vulkan->swapchain.p_image_views,
+      );
+  darray_destroy(p_vulkan->swapchain.p_image_views);
+  darray_destroy(p_vulkan->swapchain.p_images);
+
+  // destroy command pool
+  vulkan_command_destroy_pool(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators,
+      p_vulkan->command.command_pool
+      );
+  darray_destroy(p_vulkan->command.p_command_buffers);
+
+  // destroy logical device
+  vulkan_device_logical_device_destroy(
+      p_vulkan->device.logical_device,
+      p_vulkan->p_allocators
+      );
+
+  // destroy surface destroy
+  vulkan_surface_destroy(
+      p_vulkan->instance,
+      p_vulkan->p_allocators,
+      p_vulkan->surface.handle
+      );
+  //destroy instance
+  vulkan_instance_destroy(p_vulkan->instance,p_vulkan->p_allocators);
+}
+
 

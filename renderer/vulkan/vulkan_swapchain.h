@@ -45,7 +45,6 @@ void vulkan_swapchain_destroy(
     VkAllocationCallbacks* p_allocators,
     VkSwapchainKH swapchain,
     u32 image_count,
-    VkImage* p_images,
     VkImageView* p_image_views
     );
 #endif

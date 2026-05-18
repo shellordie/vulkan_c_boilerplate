@@ -8,7 +8,10 @@ b8 vulkan_instance_create(
     VkInstance* p_vk_instance
     );
 
-void vulkan_instance_destroy();
+void vulkan_instance_destroy(
+    VkInstance vk_instance,
+    VkAllocationCallbacks* p_allocators
+    );
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,

@@ -43,7 +43,8 @@ typedef struct vk_framebuffer_t
 typedef struct vk_command_t
 {
   VkCommandPool command_pool;
-  VkCommandBuffer command_buffer;
+  u32 command_buffer_count;
+  VkCommandBuffer* p_command_buffers;
 }vk_command_t;
 
 typedef struct vk_renderpass_t

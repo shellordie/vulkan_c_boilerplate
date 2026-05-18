@@ -35,7 +35,7 @@ b8 vulkan_command_allocate_buffer(
   allocation_info.level=VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   allocation_info.commandBufferCount=command_buffer_count;
   vk_check_ex(
-      vkAllocateCommandBuffers(logical_device,&allocation_info,p_command_buffer),
+      vkAllocateCommandBuffers(logical_device,&allocation_info,p_command_buffers),
       "command buffer allocation failed !",
       "command buffer allocated !");
   return  1;

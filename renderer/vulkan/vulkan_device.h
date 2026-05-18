@@ -23,5 +23,9 @@ b8 vulkan_device_get_queue(
     VkQueue* p_queue
     );
 
+void vulkan_device_logical_device_destroy(
+    VkDevice logical_device,
+    VkAllocationCallbacks* p_allocators
+    );
 
 #endif

@@ -61,15 +61,11 @@ b8 vulkan_swapchain_get_images(
 
   //allocate memory for swapchain images 
   p_images=darray_reserve(VkImage,*images_count);
-  //p_vulkan->swapchain.p_images_views=darray_reserve(VkImageView,p_vulkan->swapchain.images_count);
   // get swapchain images
   vk_check_ex(
       vkGetSwapchainImagesKHR(logical_device,swapchain,p_image_count,p_images),
       "failed to get swapchain images!",
       "swapchain images retrieved !");
-
-  // create swapchain images views
-  //vulkan_swapchain_create_images_views(p_vulkan);
   return 1;
 }
 
@@ -148,20 +144,15 @@ void vulkan_swapchain_destroy(
     VkAllocationCallbacks* p_allocators,
     VkSwapchainKHR swapchain,
     u32 image_count,
-    VkImage* p_images,
     VkImageView* p_image_views
     )
 {
-  assert_failure(p_images!=NULL,"p_images is NULL");
   assert_failure(p_image_views!=NULL,"p_image_views is NULL");
  //destroy imageViews
   for(u32 i=0;i<image_count;i++)
   {
     vkDestroyImageView(logical_device,p_images_views[i],p_allocators);
   }
-  darray_destroy(p_images_views);
-  ////destroy images
-  darray_destroy(swapchain.p_images);
   //destroy swapchain
   vkDestroySwapchainKHR(logical_device,swapchain,p_allocators);
 }
