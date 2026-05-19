@@ -25,10 +25,10 @@ b8 vulkan_surface_create(
 }
 
 void vulkan_surface_destroy(
-    VKInstance vk_instance,
-    VkAllocationCallbacks* p_alloctors,
+    VkInstance vk_instance,
+    VkAllocationCallbacks* p_allocators,
     VkSurfaceKHR  surface
     )
 {
-  VkDestroySurfaceKHR(vk_instance,surface,p_allocators);
+  vkDestroySurfaceKHR(vk_instance,surface,p_allocators);
 }

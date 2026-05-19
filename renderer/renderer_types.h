@@ -1,5 +1,6 @@
-#ifndef _VULKAN_RENDER_TYPES_H_
-#define _VULKAN_RENDER_TYPES_H_
+#ifndef _VULKAN_RENDERER_TYPES_H_
+#define _VULKAN_RENDERER_TYPES_H_
+
 #include "defines.h"
 #include "vulkan/vulkan_types.h"
 
@@ -15,8 +16,8 @@ typedef struct vk_device_t
 
 typedef struct vk_queue_t
 {
-  u32 global_family_index;
-  u32 queue_count;
+  u32 family_index;
+  u32 count;
   VkQueue* p_handles;
 }vk_queue_t;
 
@@ -26,7 +27,7 @@ typedef struct vk_swapchain_t
   VkFormat image_format;
   u32 image_count;
   VkImage* p_images;
-  VkImageView* p_images_views;
+  VkImageView* p_image_views;
   VkFence fence;
 }vk_swapchain_t;
 
@@ -58,7 +59,7 @@ typedef struct vulkan_t
   VkAllocationCallbacks* p_allocators;
   VkDebugUtilsMessengerEXT debug_messenger;
   vk_device_t device;
-  vk_queue_t queue;
+  vk_queue_t global_queue;
   vk_swapchain_t swapchain;
   vk_surface_t surface;
   vk_framebuffer_t framebuffer;
@@ -66,4 +67,4 @@ typedef struct vulkan_t
   vk_renderpass_t renderpass;
 }vulkan_t;
 
-
+#endif

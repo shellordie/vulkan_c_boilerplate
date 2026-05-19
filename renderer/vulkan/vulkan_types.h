@@ -7,8 +7,8 @@
 #include "defines.h"
 
 
-#define vk_check(vk_status,message_f) assert_failure(vk_status==VK_SUCCESS,message)
-#define vk_check_ex(vk_status,message_f,message_s) assert(vk_status!=VK_SUCCESS,message,message_s)
+#define vk_check(vk_status,message_f) assert_failure(vk_status==VK_SUCCESS,message_f)
+#define vk_check_ex(vk_status,message_f,message_s) assert(vk_status==VK_SUCCESS,message_f,message_s)
 
 
 #include "vulkan_instance.h"

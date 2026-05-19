@@ -3,7 +3,8 @@
 b8 vulkan_init_create_instance(
     VkAllocationCallbacks* p_allocators,
     char* p_app_name,
-    VkInstance* p_vk_instance
+    VkInstance* p_vk_instance,
+    VkDebugUtilsMessengerEXT* p_debug_messenger
     )
 {
   p_allocators=0;
@@ -47,9 +48,9 @@ b8 vulkan_init_create_instance(
       "vulkan instance created !"
       );
 
-  PFN_vkCreateDebugUtilsMessengerEXT pfn_create_debug_utils_messenger =(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_vulkan->instance,"vkCreateDebugUtilsMessengerEXT");
+  PFN_vkCreateDebugUtilsMessengerEXT pfn_create_debug_utils_messenger =(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(*p_vk_instance,"vkCreateDebugUtilsMessengerEXT");
   vk_check_ex(
-      pfn_create_debug_utils_messenger(p_vulkan->instance,&debug_messenger_info,p_vulkan->p_allocators,&p_vulkan->debug_messenger),
+      pfn_create_debug_utils_messenger(*p_vk_instance,&debug_messenger_info,p_allocators,p_debug_messenger),
       "debug messenger creation failed!",
       "debug messenger created!");
   return 1;

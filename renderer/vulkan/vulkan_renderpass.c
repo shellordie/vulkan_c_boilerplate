@@ -107,6 +107,6 @@ void vulkan_renderpass_destroy(
     VkRenderPass renderpass
     )
 {
-  vkDestroyRenderpass(logical_device,renderapss,p_allocators);
+  vkDestroyRenderPass(logical_device,renderpass,p_allocators);
 }
 

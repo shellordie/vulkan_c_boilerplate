@@ -4,10 +4,12 @@
 
 b8 vulkan_swapchain_create(
     VkDevice logical_device,
-    VkAllocationsCallbacks* p_alocators,
+    VkAllocationCallbacks* p_alocators,
     VkSurfaceKHR surface,
     VkFormat image_format,
-    u32* p_queue_family_index,
+    u32 image_count,
+    u32 presentation_queue_count,
+    u32* p_queue_family_indices,
     u16 width,
     u16 height,
     VkSwapchainKHR* p_swapchain
@@ -17,12 +19,12 @@ b8 vulkan_swapchain_get_images(
     VkDevice logical_device,
     VkSwapchainKHR swapchain,
     u32* p_image_count,
-    VkImage* p_images,
+    VkImage* p_images
     );
 
 b8 vulkan_swapchain_create_image_view(
     VkDevice logical_device,
-    VkAllocationsCallbacks* p_allocators,
+    VkAllocationCallbacks* p_allocators,
     VkFormat image_format,
     VkImage image,
     VkImageView* p_image_view
@@ -43,7 +45,7 @@ b8 vulkan_swapchain_present_image(
 void vulkan_swapchain_destroy(
     VkDevice logical_device,
     VkAllocationCallbacks* p_allocators,
-    VkSwapchainKH swapchain,
+    VkSwapchainKHR swapchain,
     u32 image_count,
     VkImageView* p_image_views
     );

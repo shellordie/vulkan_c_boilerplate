@@ -33,10 +33,10 @@ b8 vulkan_framebuffer_create(
 void vulkan_framebuffer_destroy(
     VkDevice logical_device,
     VkAllocationCallbacks* p_allocators,
-    VkFramebuffer* p_framebuffer)
+    VkFramebuffer framebuffer)
 {
 
-  vkDestroyFramebuffer(logical_device,p_framebuffer,p_allocators);
+  vkDestroyFramebuffer(logical_device,framebuffer,p_allocators);
 }
 
 

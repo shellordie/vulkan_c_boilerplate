@@ -5,7 +5,8 @@
 b8 vulkan_instance_create(
     VkAllocationCallbacks* p_allocators,
     char* p_app_name,
-    VkInstance* p_vk_instance
+    VkInstance* p_vk_instance,
+    VkDebugUtilsMessengerEXT* p_debug_messenger
     );
 
 void vulkan_instance_destroy(

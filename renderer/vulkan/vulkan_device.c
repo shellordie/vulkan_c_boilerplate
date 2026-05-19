@@ -42,7 +42,7 @@ b8 vulkan_device_logical_device_create(
   device_create_info.pNext=NULL;
   device_create_info.flags=0;
   device_create_info.queueCreateInfoCount=queue_count;
-  device_create_info.pQueueCreateInfos=&p_queue_create_info;
+  device_create_info.pQueueCreateInfos=p_queue_create_info;
   device_create_info.enabledLayerCount=0;
   device_create_info.ppEnabledLayerNames=0;
   device_create_info.enabledExtensionCount=1;
@@ -61,14 +61,11 @@ b8 vulkan_device_logical_device_create(
 b8 vulkan_device_get_queue(
     VkDevice logical_device,
     u32 queue_family_index,
-    u32_queue_index_in_family,
+    u32 queue_index_in_family,
     VkQueue* p_queue
     )
 {
-  vk_check_ex(
-      vkGetDeviceQueue(logical_device,queue_family_index,queue_index_in_family,p_queue),
-      "error getting queue ! ",
-      "queue retrieved !");
+  vkGetDeviceQueue(logical_device,queue_family_index,queue_index_in_family,p_queue);
   return 1;
 }
 
@@ -77,7 +74,7 @@ void vulkan_device_logical_device_destroy(
     VkAllocationCallbacks* p_allocators
     )
 {
-  vkDeviceDestroy(logical_device,p_allocators);
+  vkDestroyDevice(logical_device,p_allocators);
 }
 
 

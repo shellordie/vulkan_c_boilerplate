@@ -28,7 +28,7 @@ b8 vulkan_command_submit(
     );
 
 void vulkan_command_destroy_pool(
-    vkDevice logical_device,
+    VkDevice logical_device,
     VkAllocationCallbacks* p_allocators,
     VkCommandPool command_pool
     );

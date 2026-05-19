@@ -6,6 +6,7 @@ b8 vulkan_swapchain_create(
     VkSurfaceKHR surface,
     VkFormat image_format,
     u32 image_count,
+    u32 presentation_queue_count,
     u32* p_queue_family_indices,
     u16 width, 
     u16 height,
@@ -30,9 +31,9 @@ b8 vulkan_swapchain_create(
   swapchain_create_info.imageArrayLayers=1;
   swapchain_create_info.imageSharingMode=VK_SHARING_MODE_EXCLUSIVE;
   swapchain_create_info.imageUsage=VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-  swapchain_create_info.queueFamilyIndexCount=1;
+  swapchain_create_info.queueFamilyIndexCount=presentation_queue_count;
 
-  swapchain_create_info.pQueueFamilyIndices=p_queue_family_index;
+  swapchain_create_info.pQueueFamilyIndices=p_queue_family_indices;
 
   swapchain_create_info.preTransform=VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
   swapchain_create_info.compositeAlpha=VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -51,16 +52,16 @@ b8 vulkan_swapchain_get_images(
     VkDevice logical_device,
     VkSwapchainKHR swapchain,
     u32* p_image_count,
-    VkImage* p_images,
+    VkImage* p_images
     ) 
 {
-  vk_check(vkGetSwapchainImagesKHR(logical_device,swapchain,p_image_count,0),
+  //TODO: better of doing this ,get darray reserve out of here
+  u32 actual_image_count;
+  vk_check(vkGetSwapchainImagesKHR(logical_device,swapchain,&actual_image_count,0),
       "getting swapchain image count failed!");
 
-  printf("swapchain images count =%d !\n",*p_image_count);
+  assert_failure(*p_image_count==actual_image_count,"swapchain image count don't match");
 
-  //allocate memory for swapchain images 
-  p_images=darray_reserve(VkImage,*images_count);
   // get swapchain images
   vk_check_ex(
       vkGetSwapchainImagesKHR(logical_device,swapchain,p_image_count,p_images),
@@ -71,7 +72,7 @@ b8 vulkan_swapchain_get_images(
 
 b8 vulkan_swapchain_create_image_view(
     VkDevice logical_device,
-    VkAllocationsCallbacks* p_allocators,
+    VkAllocationCallbacks* p_allocators,
     VkFormat image_format,
     VkImage image,
     VkImageView* p_image_view
@@ -133,7 +134,7 @@ b8 vulkan_swapchain_present_image(
   present_info.pImageIndices=p_image_index;
   present_info.pResults=&swapchain_result;
 
-  vkQueuePresentKHR(global_queue,&present_info);
+  vkQueuePresentKHR(present_queue,&present_info);
 
   vk_check_ex(swapchain_result,"presentation failed","presentation success");
   return 1;
@@ -151,7 +152,7 @@ void vulkan_swapchain_destroy(
  //destroy imageViews
   for(u32 i=0;i<image_count;i++)
   {
-    vkDestroyImageView(logical_device,p_images_views[i],p_allocators);
+    vkDestroyImageView(logical_device,p_image_views[i],p_allocators);
   }
   //destroy swapchain
   vkDestroySwapchainKHR(logical_device,swapchain,p_allocators);

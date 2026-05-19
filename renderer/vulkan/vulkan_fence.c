@@ -20,7 +20,7 @@ b8 vulkan_fence_create(
 
 void vulkan_fence_destroy(
     VkDevice logical_device,
-    vkAllocationsCallbacks* p_allocators,
+    VkAllocationCallbacks* p_allocators,
     VkFence fence)
 {
   vkDestroyFence(logical_device,fence,p_allocators);
