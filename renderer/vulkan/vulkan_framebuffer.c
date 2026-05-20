@@ -25,7 +25,7 @@ b8 vulkan_framebuffer_create(
   vk_check_ex(
       vkCreateFramebuffer(logical_device,&framebuffer_create_info,p_allocators,p_framebuffer),
       "framebuffer creation failed!",
-      "framebuffer creation failed!"
+      "framebuffer created !"
       );
   return 1;
 }

@@ -2,8 +2,17 @@
 #define _VULKAN_RENDERER_TYPES_H_
 
 #include "defines.h"
-#include "vulkan/vulkan_types.h"
 
+#include <windows.h>
+
+#include "vulkan/vulkan_instance.h"
+#include "vulkan/vulkan_device.h"
+#include "vulkan/vulkan_swapchain.h"
+#include "vulkan/vulkan_surface.h"
+#include "vulkan/vulkan_command.h"
+#include "vulkan/vulkan_renderpass.h"
+#include "vulkan/vulkan_framebuffer.h"
+#include "vulkan/vulkan_fence.h"
 
 typedef struct vk_device_t
 {

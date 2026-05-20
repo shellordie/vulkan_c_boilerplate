@@ -10,5 +10,6 @@ b8 renderer_backend_init(
     u16 drawable_width,
     u16 drawable_height
     );
+
 void renderer_backend_shutdown(vulkan_t* p_vulkan);
 #endif

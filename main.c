@@ -13,18 +13,8 @@
 
 
 #include "platform/platform.h"
-#include "renderer/renderer_backend.h"
-/*
-#include "vulkan/vulkan_types.h"
-#include "vulkan/vulkan_init.h"
-#include "vulkan/vulkan_surface.h"
-#include "vulkan/vulkan_device.h"
-#include "vulkan/vulkan_command.h"
-#include "vulkan/vulkan_swapchain.h"
-#include "vulkan/vulkan_renderpass.h"
-#include "vulkan/vulkan_framebuffer.h"
-*/
 
+#include "renderer/renderer_backend.h"
 
 
 
@@ -42,9 +32,9 @@ int main()
   window.instance_handle=0;
   window.closed=0;
   window.name="vulkan_game";
-  
 
   create_window(&window);
+  printf("window created \n");
 
   renderer_backend_init(
       &vulkan,
@@ -59,7 +49,7 @@ int main()
   //str_test();
   //test_entity();
   //test_component();
-  event_test();
+  //event_test();
 
 
   SDL_ShowWindow(window.window);
@@ -75,48 +65,66 @@ int main()
         window.closed=1;
       }
     }
-    /*
+    
 
     // frame start
     //
     // query available swapchain image
-    uint32_t image_index;
-    get_presentable_image(&vulkan,&image_index);
+    u32 image_index;
+    vulkan_swapchain_get_presentable_image(
+        vulkan.device.logical_device,
+        vulkan.swapchain.handle,
+        vulkan.swapchain.fence,
+        &image_index
+        );
 
     // render loop
 
-    begin_command_buffer(vulkan);  
+    vulkan_command_begin_buffer(vulkan.command.p_command_buffers[0]);  
         
     // renderpass commands 
     
-    begin_renderpass(vulkan,image_index,window.drawable_width,window.drawable_height);
+    vulkan_renderpass_begin(
+        vulkan.command.p_command_buffers[0],
+        vulkan.renderpass.handle,
+        vulkan.framebuffer.p_handles[image_index],
+        window.drawable_width,
+        window.drawable_height
+        );
 
     // record subpass command in here
 
-    vkCmdEndRenderPass(vulkan.command_buffer);
+    vulkan_renderpass_end(
+        vulkan.command.p_command_buffers[0]
+        );
 
-    vkEndCommandBuffer(vulkan.command_buffer);
+    vulkan_command_end_buffer(vulkan.command.p_command_buffers[0]);
 
     // submit command 
-    submit_command(vulkan);
+    vulkan_command_submit(
+        vulkan.command.command_buffer_count,
+        vulkan.command.p_command_buffers,
+        vulkan.global_queue.p_handles[0]
+        );
 
     // wait until execution is done
-    if(vkQueueWaitIdle(vulkan.global_queue)!=VK_SUCCESS)
+    if(vkQueueWaitIdle(vulkan.global_queue.p_handles[0])!=VK_SUCCESS)
     {
       printf(" -queue execution failed ! \n");
       return -1;
     }
 
     // reset the command buffer
-    vkResetCommandBuffer(vulkan.command_buffer,VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+    vkResetCommandBuffer(vulkan.command.p_command_buffers[0],VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
     // present to the swapchain
-    present_image(&vulkan,&image_index);
+    vulkan_swapchain_present_image(
+        vulkan.global_queue.p_handles[0],
+        &vulkan.swapchain.handle,
+        &image_index
+        );
 
     // end frame
-    // */
-
   }
-  
   return 0;
 }

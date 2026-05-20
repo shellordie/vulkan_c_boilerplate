@@ -24,7 +24,16 @@ run:
 	
 	clang -c  main.c -o ./build/main.o  -I C:\VulkanSDK\1.4.321.1\Include -I ./ -I ./libs/
 
-	clang  ./build/event.o ./build/component.o ./build/entity.o ./build/str.o ./build/assert.o ./build/darray.o ./build/memory.o ./build/platform.o ./build/vulkan_instance.o ./build/vulkan_device.o ./build/vulkan_surface.o ./build/vulkan_fence.o ./build/vulkan_command.o ./build/vulkan_swapchain.o ./build/vulkan_renderpass.o ./build/vulkan_framebuffer.o ./build/renderer_backend.o ./build/main.o -o ./build/app.exe -L C:\VulkanSDK\1.4.321.1\Lib -L ./dlls/ -luser32 -lvulkan-1 -lsdl3
+	clang ./build/event.o ./build/component.o ./build/entity.o ./build/str.o ./build/assert.o ./build/darray.o ./build/memory.o ./build/platform.o ./build/vulkan_instance.o ./build/vulkan_device.o ./build/vulkan_surface.o ./build/vulkan_fence.o ./build/vulkan_command.o ./build/vulkan_swapchain.o ./build/vulkan_renderpass.o ./build/vulkan_framebuffer.o ./build/renderer_backend.o ./build/main.o -o ./build/app.exe -L C:\VulkanSDK\1.4.321.1\Lib -L ./dlls/ -luser32 -lvulkan-1 -lsdl3
+
 	./build/app.exe
+
+
+
+clean_run:
+	rm -rf build
+	mkdir build
+	cp ./dlls/SDL3.dll ./build
+	make run 
 
 	

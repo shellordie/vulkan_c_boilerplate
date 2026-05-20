@@ -1,6 +1,9 @@
 #include "vulkan_device.h"
 
-b8 get_physical_device(VkInstance vk_instance,VkPhysicalDevice* p_physical_device)
+b8 vulkan_device_get_physical_device(
+    VkInstance vk_instance,
+    VkPhysicalDevice* p_physical_device
+    )
 {
   u32 device_count=1;
   vk_check_ex(

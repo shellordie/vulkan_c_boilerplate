@@ -1,6 +1,6 @@
 #include "vulkan_instance.h"
 
-b8 vulkan_init_create_instance(
+b8 vulkan_instance_create(
     VkAllocationCallbacks* p_allocators,
     char* p_app_name,
     VkInstance* p_vk_instance,
