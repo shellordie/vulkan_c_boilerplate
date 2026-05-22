@@ -36,7 +36,7 @@ int main()
   create_window(&window);
   printf("window created \n");
 
-  renderer_backend_init(
+  renderer_backend_initialization(
       &vulkan,
       window.instance_handle,
       window.window_handle,
@@ -62,6 +62,7 @@ int main()
     {
       if(event.type==SDL_EVENT_QUIT)
       {
+        renderer_backend_shutdown(&vulkan);
         window.closed=1;
       }
     }

@@ -81,9 +81,12 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
 
 void vulkan_instance_destroy(
     VkInstance vk_instance,
+    VkDebugUtilsMessengerEXT debug_messenger,
     VkAllocationCallbacks* p_allocators
     )
 {
+  PFN_vkDestroyDebugUtilsMessengerEXT pfn_destroy_debug_utils_messenger =(PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(vk_instance,"vkDestroyDebugUtilsMessengerEXT");
+  pfn_destroy_debug_utils_messenger(vk_instance,debug_messenger,p_allocators);
   vkDestroyInstance(vk_instance,p_allocators);
 }
 

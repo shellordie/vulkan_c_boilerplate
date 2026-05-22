@@ -1,6 +1,6 @@
 #include "renderer_backend.h" 
 
-b8 renderer_backend_init(
+b8 renderer_backend_initialization(
     vulkan_t* p_vulkan,
     HINSTANCE hinstance_handle,
     HWND window_handle,
@@ -151,6 +151,8 @@ b8 renderer_backend_init(
 
 void renderer_backend_shutdown(vulkan_t* p_vulkan)
 {
+  printf("destroying everything ... \n");
+  vkDeviceWaitIdle(p_vulkan->device.logical_device);
   //destroy framebuffer
   for(u32 i=0;i<p_vulkan->swapchain.image_count;i++){
     vulkan_framebuffer_destroy(
@@ -160,6 +162,7 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
         );
   }
   darray_destroy(p_vulkan->framebuffer.p_handles);
+  printf("framebuffers destroyed \n");
 
   //destroy renderpass
   vulkan_renderpass_destroy(
@@ -167,6 +170,7 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
       p_vulkan->p_allocators,
       p_vulkan->renderpass.handle
       );
+  printf("renderpass destroyed \n");
 
   // destroy swapchain fence
   vulkan_fence_destroy(
@@ -174,6 +178,7 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
       p_vulkan->p_allocators,
       p_vulkan->swapchain.fence
       );
+  printf("swapchain fence destroyed \n");
 
   // destroy swapchain 
   vulkan_swapchain_destroy( 
@@ -185,6 +190,7 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
       );
   darray_destroy(p_vulkan->swapchain.p_image_views);
   darray_destroy(p_vulkan->swapchain.p_images);
+  printf("swapchain destroyed \n");
 
   // destroy command pool
   vulkan_command_destroy_pool(
@@ -194,11 +200,14 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
       );
   darray_destroy(p_vulkan->command.p_command_buffers);
 
+  printf("commands destroyed \n");
+
   // destroy logical device
   vulkan_device_logical_device_destroy(
       p_vulkan->device.logical_device,
       p_vulkan->p_allocators
       );
+  printf("logical device destroyed \n");
 
   // destroy surface destroy
   vulkan_surface_destroy(
@@ -206,8 +215,11 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
       p_vulkan->p_allocators,
       p_vulkan->surface.handle
       );
+  printf("surface destroyed \n");
+
   //destroy instance
-  vulkan_instance_destroy(p_vulkan->instance,p_vulkan->p_allocators);
+  vulkan_instance_destroy(p_vulkan->instance,p_vulkan->debug_messenger,p_vulkan->p_allocators);
+  printf("instance destroyed \n");
 }
 
 

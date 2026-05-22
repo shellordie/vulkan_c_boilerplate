@@ -2,7 +2,7 @@
 #define _RENDERER_BACKEND_H_
 #include "renderer_types.h"
 
-b8 renderer_backend_init(
+b8 renderer_backend_initialization(
     vulkan_t* p_vulkan,
     HINSTANCE hinstance_handle,
     HWND window_handle,

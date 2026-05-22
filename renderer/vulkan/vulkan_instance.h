@@ -11,6 +11,7 @@ b8 vulkan_instance_create(
 
 void vulkan_instance_destroy(
     VkInstance vk_instance,
+    VkDebugUtilsMessengerEXT debug_messenger,
     VkAllocationCallbacks* p_allocators
     );
 

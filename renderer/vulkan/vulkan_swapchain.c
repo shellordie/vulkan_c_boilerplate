@@ -106,11 +106,18 @@ b8 vulkan_swapchain_get_presentable_image(
     u32* p_image_index)
 {
   // query available swapchain image
-  vk_check(vkAcquireNextImageKHR(logical_device,swapchain,UINT64_MAX,NULL,fence,p_image_index),
-      "failed to acquire an image");
-
-  vk_check(vkGetFenceStatus(logical_device,fence),"failed getting fence status");
-
+  vkAcquireNextImageKHR(
+      logical_device,
+      swapchain,
+      UINT64_MAX,
+      NULL,
+      fence,
+      p_image_index
+      );
+    vk_check(
+        vkWaitForFences(logical_device,1,&fence,VK_TRUE,UINT64_MAX),
+        "failed to get presentable image");
+  
   vk_check(vkResetFences(logical_device,1,&fence),"failed to reset fence status");
   return 1;
 }
@@ -136,7 +143,7 @@ b8 vulkan_swapchain_present_image(
 
   vkQueuePresentKHR(present_queue,&present_info);
 
-  vk_check_ex(swapchain_result,"presentation failed","presentation success");
+  vk_check(swapchain_result,"presentation failed");
   return 1;
 }
 

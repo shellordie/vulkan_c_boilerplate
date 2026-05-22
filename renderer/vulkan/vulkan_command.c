@@ -75,10 +75,9 @@ b8 vulkan_command_submit(
   submit_info.pCommandBuffers=p_command_buffers;
   submit_info.signalSemaphoreCount=0;
   submit_info.pSignalSemaphores=0;
-  vk_check_ex(
+  vk_check(
       vkQueueSubmit(worker_queue,1,&submit_info,NULL),
-      "queue submission failed !",
-      "queue submited!");
+      "queue submission failed !");
   return 1;
 }
 
