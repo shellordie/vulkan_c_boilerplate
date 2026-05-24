@@ -131,7 +131,7 @@ b8 renderer_backend_initialization(
 
   // create frame buffers 
 
-  p_vulkan->framebuffer.p_handles=darray_reserve(VkFramebuffer,p_vulkan->swapchain.image_count);
+  p_vulkan->p_framebuffers=darray_reserve(vk_framebuffer_t,p_vulkan->swapchain.image_count);
 
   for(u32 i=0;i<p_vulkan->swapchain.image_count;i++){
     vulkan_framebuffer_create(
@@ -141,7 +141,7 @@ b8 renderer_backend_initialization(
         &p_vulkan->swapchain.p_image_views[i],
         drawable_width,
         drawable_height,
-        &p_vulkan->framebuffer.p_handles[i]
+        &p_vulkan->p_framebuffers[i].handle
         );
   }
   return 1;
@@ -158,10 +158,10 @@ void renderer_backend_shutdown(vulkan_t* p_vulkan)
     vulkan_framebuffer_destroy(
         p_vulkan->device.logical_device,
         p_vulkan->p_allocators,
-        p_vulkan->framebuffer.p_handles[i]
+        p_vulkan->p_framebuffers[i].handle
         );
   }
-  darray_destroy(p_vulkan->framebuffer.p_handles);
+  darray_destroy(p_vulkan->p_framebuffers);
   printf("framebuffers destroyed \n");
 
   //destroy renderpass

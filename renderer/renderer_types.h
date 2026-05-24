@@ -47,7 +47,7 @@ typedef struct vk_surface_t
 
 typedef struct vk_framebuffer_t
 {
-  VkFramebuffer* p_handles;
+  VkFramebuffer handle;
 }vk_framebuffer_t;
 
 typedef struct vk_command_t
@@ -71,7 +71,7 @@ typedef struct vulkan_t
   vk_queue_t global_queue;
   vk_swapchain_t swapchain;
   vk_surface_t surface;
-  vk_framebuffer_t framebuffer;
+  vk_framebuffer_t* p_framebuffers;
   vk_command_t command;
   vk_renderpass_t renderpass;
 }vulkan_t;

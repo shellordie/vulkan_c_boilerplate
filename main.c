@@ -88,7 +88,7 @@ int main()
     vulkan_renderpass_begin(
         vulkan.command.p_command_buffers[0],
         vulkan.renderpass.handle,
-        vulkan.framebuffer.p_handles[image_index],
+        vulkan.p_framebuffers[image_index].handle,
         window.drawable_width,
         window.drawable_height
         );
