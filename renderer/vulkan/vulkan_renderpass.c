@@ -7,27 +7,25 @@ b8 vulkan_renderpass_create(
     VkRenderPass* p_renderpass
     )
 {
+  //attachments descriptions
+  //
+  VkAttachmentDescription attach_description;
+  attach_description.flags=0;
+  attach_description.format=image_format;
+  attach_description.samples=VK_SAMPLE_COUNT_1_BIT;
+  attach_description.loadOp=VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attach_description.storeOp=VK_ATTACHMENT_STORE_OP_STORE;
+  attach_description.stencilLoadOp=VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attach_description.stencilStoreOp=VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attach_description.initialLayout=VK_IMAGE_LAYOUT_UNDEFINED;
+  attach_description.finalLayout=VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    
   VkRenderPassCreateInfo renderpass_create_info;
   renderpass_create_info.sType=VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   renderpass_create_info.pNext=0;
   renderpass_create_info.flags=0;
   renderpass_create_info.attachmentCount=1;
-  VkAttachmentDescription attach_description_array[1]=
-  {
-    {
-      0,
-      image_format,
-      VK_SAMPLE_COUNT_1_BIT,
-      VK_ATTACHMENT_LOAD_OP_CLEAR,
-      VK_ATTACHMENT_STORE_OP_STORE,
-      VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-      VK_ATTACHMENT_STORE_OP_DONT_CARE,
-      VK_IMAGE_LAYOUT_UNDEFINED,
-      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-    }
-    
-  };
-  renderpass_create_info.pAttachments=attach_description_array;
+  renderpass_create_info.pAttachments=&attach_description;
 
   VkAttachmentReference color_attach_reference[1]=
   {
