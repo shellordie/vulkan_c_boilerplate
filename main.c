@@ -57,17 +57,6 @@ int main()
   while(window.closed!=1)
   {
     SDL_Event event;
-
-    while (SDL_PollEvent(&event))
-    {
-      if(event.type==SDL_EVENT_QUIT)
-      {
-        renderer_backend_shutdown(&vulkan);
-        window.closed=1;
-      }
-    }
-    
-
     // frame start
     //
     // query available swapchain image
@@ -118,13 +107,21 @@ int main()
     // reset the command buffer
     vkResetCommandBuffer(vulkan.command.p_command_buffers[0],VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
-    // present to the swapchain
+    // present to the surface 
     vulkan_swapchain_present_image(
         vulkan.global_queue.p_handles[0],
         &vulkan.swapchain.handle,
         &image_index
         );
 
+    while (SDL_PollEvent(&event))
+    {
+      if(event.type==SDL_EVENT_QUIT)
+      {
+        renderer_backend_shutdown(&vulkan);
+        window.closed=1;
+      }
+    }
     // end frame
   }
   return 0;
